@@ -9,15 +9,23 @@ import (
 
 	"github.com/crossplane/upjet/pkg/controller"
 
-	resource "github.com/upbound/upjet-provider-template/internal/controller/null/resource"
-	providerconfig "github.com/upbound/upjet-provider-template/internal/controller/providerconfig"
+	instance "github.com/terasky-oss/provider-cloudstack/internal/controller/machine/instance"
+	template "github.com/terasky-oss/provider-cloudstack/internal/controller/machine/template"
+	ipaddress "github.com/terasky-oss/provider-cloudstack/internal/controller/network/ipaddress"
+	network "github.com/terasky-oss/provider-cloudstack/internal/controller/network/network"
+	vpc "github.com/terasky-oss/provider-cloudstack/internal/controller/network/vpc"
+	providerconfig "github.com/terasky-oss/provider-cloudstack/internal/controller/providerconfig"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		resource.Setup,
+		instance.Setup,
+		template.Setup,
+		ipaddress.Setup,
+		network.Setup,
+		vpc.Setup,
 		providerconfig.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {

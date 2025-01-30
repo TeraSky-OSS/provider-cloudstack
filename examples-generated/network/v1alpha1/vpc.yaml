@@ -1,0 +1,14 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: VPC
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/vpc
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    cidr: 10.0.0.0/16
+    name: test-vpc
+    vpcOffering: Default VPC Offering
+    zone: zone-1

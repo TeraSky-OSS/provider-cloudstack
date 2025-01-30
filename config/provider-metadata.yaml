@@ -1,40 +1,1294 @@
-name: hashicorp/null
+name: cloudstack/cloudstack
 resources:
-    null_resource:
+    cloudstack_account:
         subCategory: ""
-        description: The null_resource resource implements the standard resource lifecycle but takes no further action. On Terraform 1.4 and later, use the terraform_data resource type https://developer.hashicorp.com/terraform/language/resources/terraform-data instead. The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
-        name: null_resource
-        title: null_resource Resource - terraform-provider-null
+        description: Creates a Account
+        name: cloudstack_account
+        title: cloudstack_account
         examples:
-            - name: cluster
+            - name: example
               manifest: |-
                 {
-                  "connection": [
+                  "account_type": 1,
+                  "email": "user@example.com",
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "password": "securepassword",
+                  "role_id": "1234abcd",
+                  "username": "jdoe"
+                }
+        argumentDocs:
+            account: '- (Optional) The account name. If not specified, the username will be used as the account name.'
+            account_type: '- (Required) The account type. Possible values are 0 for regular user, 1 for admin, and 2 for domain admin.'
+            email: '- (Required) The email address of the account owner.'
+            first_name: '- (Required) The first name of the account owner.'
+            id: '- The ID of the account.'
+            last_name: '- (Required) The last name of the account owner.'
+            password: '- (Required) The password for the account.'
+            role_id: '- (Required) The ID of the role associated with the account.'
+            username: '- (Required) The username of the account.'
+        importStatements:
+            - $ terraform import cloudstack_account.example <ACCOUNTID>
+    cloudstack_affinity_group:
+        subCategory: ""
+        description: Creates an affinity group.
+        name: cloudstack_affinity_group
+        title: cloudstack_affinity_group
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "name": "test-affinity-group",
+                  "type": "host anti-affinity"
+                }
+        argumentDocs:
+            description: '- (Optional) The description of the affinity group.'
+            id: '- The id of the affinity group.'
+            name: |-
+                - (Required) The name of the affinity group. Changing this
+                forces a new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to register this
+                affinity group to. Changing this forces a new resource to be created.
+            type: |-
+                - (Required) The affinity group type. Changing this
+                forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_affinity_group.default 6226ea4d-9cbe-4cc9-b30c-b9532146da5b
+            - terraform import cloudstack_affinity_group.default my-project/6226ea4d-9cbe-4cc9-b30c-b9532146da5b
+    cloudstack_autoscale_vm_profile:
+        subCategory: ""
+        description: Creates an autoscale VM profile.
+        name: cloudstack_autoscale_vm_profile
+        title: cloudstack_autoscale_vm_profile
+        examples:
+            - name: profile1
+              manifest: |-
+                {
+                  "destroy_vm_grace_period": "45s",
+                  "metadata": {
+                    "mydata": "true"
+                  },
+                  "other_deploy_params": {
+                    "displayname": "profile1vm",
+                    "networkids": "6eb22f91-7454-4107-89f4-36afcdf33021"
+                  },
+                  "service_offering": "small",
+                  "template": "CentOS 6.5",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            destroy_vm_grace_period: |-
+                - (Optional) A time interval to wait for graceful
+                shutdown of instances.
+            id: '- The autoscale VM profile ID.'
+            metadata: |-
+                - (Optional) A mapping of metadata key/values to assign to the
+                resource.
+            other_deploy_params: |-
+                - (Optional) A mapping of additional params used when
+                creating new instances.
+            service_offering: |-
+                - (Required) The name or ID of the service offering used
+                for instances. Changing this forces a new resource to be created.
+            template: '- (Required) The name or ID of the template used for instances.'
+            zone: |-
+                - (Required) The name or ID of the zone where instances will be
+                created. Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_disk:
+        subCategory: ""
+        description: Creates a disk volume from a disk offering. This disk volume will be attached to a virtual machine if the optional parameters are configured.
+        name: cloudstack_disk
+        title: cloudstack_disk
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "attach": "true",
+                  "disk_offering": "custom",
+                  "name": "test-disk",
+                  "size": 50,
+                  "virtual_machine_id": "server-1",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            attach: |-
+                - (Optional) Determines whether or not to attach the disk volume to a
+                virtual machine (defaults false).
+            device_id: '- (Optional) The device ID to map the disk volume to within the guest OS.'
+            disk_offering: |-
+                - (Required) The name or ID of the disk offering to use for
+                this disk volume.
+            id: '- The ID of the disk volume.'
+            name: |-
+                - (Required) The name of the disk volume. Changing this forces a new
+                resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            reattach_on_change: |-
+                - (Optional) Determines whether or not to detach the disk volume
+                from the virtual machine on disk offering or size change.
+            shrink_ok: |-
+                - (Optional) Verifies if the disk volume is allowed to shrink when
+                resizing (defaults false).
+            size: '- (Optional) The size of the disk volume in gigabytes.'
+            virtual_machine_id: |-
+                - (Optional) The ID of the virtual machine to which you want
+                to attach the disk volume.
+            zone: |-
+                - (Required) The name or ID of the zone where this disk volume will be available.
+                Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_disk.default 6f3ee798-d417-4e7a-92bc-95ad41cf1244
+            - terraform import cloudstack_disk.default my-project/6f3ee798-d417-4e7a-92bc-95ad41cf1244
+    cloudstack_disk_offering:
+        subCategory: ""
+        description: Creates a Disk Offering
+        name: cloudstack_disk_offering
+        title: cloudstack_disk_offering
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "disk_size": 100,
+                  "display_text": "Example Disk Offering",
+                  "name": "example-disk-offering"
+                }
+        argumentDocs:
+            disk_size: '- (Required) The size of the disk offering in GB.'
+            display_text: '- (Required) The display text of the disk offering.'
+            id: '- The ID of the disk offering.'
+            name: '- (Required) The name of the disk offering.'
+        importStatements:
+            - $ terraform import cloudstack_disk_offering.example <DISKOFFERINGID>
+    cloudstack_domain:
+        subCategory: ""
+        description: Creates a Domain
+        name: cloudstack_domain
+        title: cloudstack_domain
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "name": "example-domain",
+                  "network_domain": "example.local",
+                  "parent_domain_id": "ROOT"
+                }
+        argumentDocs:
+            domain_id: '- (Optional) The ID of the domain.'
+            id: '- The ID of the domain.'
+            name: '- (Required) The name of the domain.'
+            network_domain: '- (Optional) The network domain for the domain.'
+            parent_domain_id: '- (Optional) The ID of the parent domain.'
+        importStatements:
+            - $ terraform import cloudstack_domain.example <DOMAINID>
+    cloudstack_egress_firewall:
+        subCategory: ""
+        description: Creates egress firewall rules for a given network.
+        name: cloudstack_egress_firewall
+        title: cloudstack_egress_firewall
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "network_id": "6eb22f91-7454-4107-89f4-36afcdf33021",
+                  "rule": [
                     {
-                      "host": "${element(aws_instance.cluster[*].public_ip, 0)}"
+                      "cidr_list": [
+                        "10.0.0.0/8"
+                      ],
+                      "ports": [
+                        "80",
+                        "1000-2000"
+                      ],
+                      "protocol": "tcp"
+                    }
+                  ]
+                }
+        argumentDocs:
+            id: '- The network ID for which the egress firewall rules are created.'
+            managed: |-
+                - (Optional) USE WITH CAUTION! If enabled all the egress firewall
+                rules for this network will be managed by this resource. This means it will
+                delete all firewall rules that are not in your config! (defaults false)
+            network_id: |-
+                - (Required) The network ID for which to create the egress
+                firewall rules. Changing this forces a new resource to be created.
+            parallelism: |-
+                (Optional) Specifies how much rules will be created or deleted
+                concurrently. (defaults 2)
+            rule: |-
+                - (Optional) Can be specified multiple times. Each rule block supports
+                fields documented below. If managed = false at least one rule is required!
+            rule.cidr_list: '- (Required) A CIDR list to allow access to the given ports.'
+            rule.icmp_code: |-
+                - (Optional) The ICMP code to allow. This can only be specified if
+                the protocol is ICMP.
+            rule.icmp_type: |-
+                - (Optional) The ICMP type to allow. This can only be specified if
+                the protocol is ICMP.
+            rule.ports: |-
+                - (Optional) List of ports and/or port ranges to allow. This can only
+                be specified if the protocol is TCP or UDP.
+            rule.protocol: |-
+                - (Required) The name of the protocol to allow. Valid options are:
+                tcp, udp and icmp.
+        importStatements: []
+    cloudstack_firewall:
+        subCategory: ""
+        description: Creates firewall rules for a given IP address.
+        name: cloudstack_firewall
+        title: cloudstack_firewall
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "ip_address_id": "30b21801-d4b3-4174-852b-0c0f30bdbbfb",
+                  "rule": [
+                    {
+                      "cidr_list": [
+                        "10.0.0.0/8"
+                      ],
+                      "ports": [
+                        "80",
+                        "1000-2000"
+                      ],
+                      "protocol": "tcp"
+                    }
+                  ]
+                }
+        argumentDocs:
+            id: '- The IP address ID for which the firewall rules are created.'
+            ip_address_id: |-
+                - (Required) The IP address ID for which to create the
+                firewall rules. Changing this forces a new resource to be created.
+            managed: |-
+                - (Optional) USE WITH CAUTION! If enabled all the firewall rules for
+                this IP address will be managed by this resource. This means it will delete
+                all firewall rules that are not in your config! (defaults false)
+            parallelism: |-
+                (Optional) Specifies how much rules will be created or deleted
+                concurrently. (defaults 2)
+            rule: |-
+                - (Optional) Can be specified multiple times. Each rule block supports
+                fields documented below. If managed = false at least one rule is required!
+            rule.cidr_list: '- (Required) A CIDR list to allow access to the given ports.'
+            rule.icmp_code: |-
+                - (Optional) The ICMP code to allow. This can only be specified if
+                the protocol is ICMP.
+            rule.icmp_type: |-
+                - (Optional) The ICMP type to allow. This can only be specified if
+                the protocol is ICMP.
+            rule.ports: |-
+                - (Optional) List of ports and/or port ranges to allow. This can only
+                be specified if the protocol is TCP or UDP.
+            rule.protocol: |-
+                - (Required) The name of the protocol to allow. Valid options are:
+                tcp, udp and icmp.
+        importStatements: []
+    cloudstack_instance:
+        subCategory: ""
+        description: Creates and automatically starts a virtual machine based on a service offering, disk offering, and template.
+        name: cloudstack_instance
+        title: cloudstack_instance
+        examples:
+            - name: web
+              manifest: |-
+                {
+                  "name": "server-1",
+                  "network_id": "6eb22f91-7454-4107-89f4-36afcdf33021",
+                  "service_offering": "small",
+                  "template": "CentOS 6.5",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            affinity_group_ids: |-
+                - (Optional) List of affinity group IDs to apply to this
+                instance.
+            affinity_group_names: |-
+                - (Optional) List of affinity group names to apply to
+                this instance.
+            cluster_id: |-
+                - (Optional) destination Cluster ID to deploy the VM to - parameter available
+                for root admin only
+            display_name: '- (Optional) The display name of the instance.'
+            expunge: |-
+                - (Optional) This determines if the instance is expunged when it is
+                destroyed (defaults false)
+            group: '- (Optional) The group name of the instance.'
+            host_id: |-
+                -  (Optional)  destination Host ID to deploy the VM to - parameter available
+                for root admin only
+            id: '- The instance ID.'
+            ip_address: |-
+                - (Optional) The IP address to assign to this instance. Changing
+                this forces a new resource to be created.
+            keypair: |-
+                - (Optional) The name of the SSH key pair that will be used to
+                access this instance.
+            name: '- (Required) The name of the instance.'
+            network_id: |-
+                - (Optional) The ID of the network to connect this instance
+                to. Changing this forces a new resource to be created.
+            pod_id: '-  (Optional) destination Pod ID to deploy the VM to - parameter available for root admin only'
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            root_disk_size: |-
+                - (Optional) The size of the root disk in gigabytes. The
+                root disk is resized on deploy. Only applies to template-based deployments.
+                Changing this forces a new resource to be created.
+            security_group_ids: |-
+                - (Optional) List of security group IDs to apply to this
+                instance. Changing this forces a new resource to be created.
+            security_group_names: |-
+                - (Optional) List of security group names to apply to
+                this instance. Changing this forces a new resource to be created.
+            service_offering: |-
+                - (Required) The name or ID of the service offering used
+                for this instance.
+            start_vm: |-
+                - (Optional) This determines if the instances is started after it
+                is created (defaults true)
+            template: |-
+                - (Required) The name or ID of the template used for this
+                instance. Changing this forces a new resource to be created.
+            uefi: '- (Optional) When set, will boot the instance in UEFI/Legacy mode (defaults false)'
+            user_data: |-
+                - (Optional) The user data to provide when launching the
+                instance. This can be either plain text or base64 encoded text.
+            zone: |-
+                - (Required) The name or ID of the zone where this instance will be
+                created. Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_instance.default 5cf69677-7e4b-4bf4-b868-f0b02bb72ee0
+            - terraform import cloudstack_instance.default my-project/5cf69677-7e4b-4bf4-b868-f0b02bb72ee0
+    cloudstack_ipaddress:
+        subCategory: ""
+        description: Acquires and associates a public IP.
+        name: cloudstack_ipaddress
+        title: cloudstack_ipaddress
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "network_id": "6eb22f91-7454-4107-89f4-36afcdf33021"
+                }
+        argumentDocs:
+            id: '- The ID of the acquired and associated IP address.'
+            ip_address: '- The IP address that was acquired and associated.'
+            is_portable: |-
+                - (Optional) This determines if the IP address should be transferable
+                across zones (defaults false)
+            network_id: |-
+                - (Optional) The ID of the network for which an IP address should
+                be acquired and associated. Changing this forces a new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            vpc_id: |-
+                - (Optional) The ID of the VPC for which an IP address should be
+                acquired and associated. Changing this forces a new resource to be created.
+            zone: |-
+                - (Optional) The name or ID of the zone for which an IP address should be
+                acquired and associated. Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_kubernetes_cluster:
+        subCategory: ""
+        description: Creates a Kubernetes Cluster
+        name: cloudstack_kubernetes_cluster
+        title: cloudstack_kubernetes_cluster
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "autoscaling_enabled": true,
+                  "control_nodes_size": 1,
+                  "description": "An example Kubernetes cluster",
+                  "keypair": "my-ssh-key",
+                  "kubernetes_version": "1.18.6",
+                  "max_size": 5,
+                  "min_size": 1,
+                  "name": "example-cluster",
+                  "network_id": "net-id",
+                  "project": "my-project",
+                  "service_offering": "small",
+                  "size": 1,
+                  "state": "Running",
+                  "zone": "zone-id"
+                }
+        argumentDocs:
+            autoscaling_enabled: '- (Optional) Whether autoscaling is enabled for the cluster.'
+            control_nodes_size: '- (Optional) The size of the control nodes in the cluster.'
+            description: '- (Optional) A description for the Kubernetes cluster.'
+            id: '- The ID of the Kubernetes cluster.'
+            ip_address: '- (Computed) The IP address of the Kubernetes cluster.'
+            keypair: '- (Optional) The SSH key pair to use for the nodes in the cluster.'
+            kubernetes_version: '- (Required) The Kubernetes version for the cluster.'
+            max_size: '- (Optional) The maximum size of the Kubernetes cluster when autoscaling is enabled.'
+            min_size: '- (Optional) The minimum size of the Kubernetes cluster when autoscaling is enabled.'
+            name: '- (Required) The name of the Kubernetes cluster.'
+            network_id: '- (Optional) The network ID to connect the Kubernetes cluster to.'
+            noderootdisksize: '- (Optional) root disk size in GB for each node.'
+            project: '- (Optional) The project to assign the Kubernetes cluster to.'
+            service_offering: '- (Required) The service offering for the nodes in the cluster.'
+            size: '- (Optional) The initial size of the Kubernetes cluster. Defaults to 1.'
+            state: '- (Optional) The state of the Kubernetes cluster. Defaults to "Running".'
+            zone: '- (Required) The zone where the Kubernetes cluster will be deployed.'
+        importStatements:
+            - $ terraform import cloudstack_kubernetes_cluster.example <KUBERNETESCLUSTERID>
+    cloudstack_kubernetes_version:
+        subCategory: ""
+        description: Creates a Kubernetes Version
+        name: cloudstack_kubernetes_version
+        title: cloudstack_kubernetes_version
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "min_cpu": 2,
+                  "min_memory": 2048,
+                  "semantic_version": "1.19.0",
+                  "url": "https://example.com/k8s/1.19.0.tar.gz"
+                }
+        argumentDocs:
+            checksum: '- (Optional) The checksum of the Kubernetes version package.'
+            id: '- The ID of the Kubernetes version.'
+            min_cpu: '- (Required) The minimum CPU requirement for the Kubernetes version.'
+            min_memory: '- (Required) The minimum memory requirement for the Kubernetes version.'
+            name: '- (Optional) The name of the Kubernetes version.'
+            semantic_version: '- (Required) The semantic version of the Kubernetes version.'
+            state: '- (Optional) The state of the Kubernetes version. Defaults to "Enabled".'
+            url: '- (Required) The URL to download the Kubernetes version package.'
+            zone: '- (Optional) The zone in which the Kubernetes version should be added.'
+        importStatements:
+            - $ terraform import cloudstack_kubernetes_version.example <KUBERNETESVERSIONID>
+    cloudstack_loadbalancer_rule:
+        subCategory: ""
+        description: Creates a load balancer rule.
+        name: cloudstack_loadbalancer_rule
+        title: cloudstack_loadbalancer_rule
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "algorithm": "roundrobin",
+                  "description": "Loadbalancer rule 1",
+                  "ip_address_id": "30b21801-d4b3-4174-852b-0c0f30bdbbfb",
+                  "member_ids": [
+                    "f8141e2f-4e7e-4c63-9362-986c908b7ea7"
+                  ],
+                  "name": "loadbalancer-rule-1",
+                  "private_port": 80,
+                  "public_port": 80
+                }
+        argumentDocs:
+            algorithm: |-
+                - (Required) Load balancer rule algorithm (source, roundrobin,
+                leastconn). Changing this forces a new resource to be created.
+            description: '- (Optional) The description of the load balancer rule.'
+            id: '- The load balancer rule ID.'
+            ip_address_id: |-
+                - (Required) Public IP address ID from where the network
+                traffic will be load balanced from. Changing this forces a new resource
+                to be created.
+            member_ids: |-
+                - (Required) List of instance IDs to assign to the load balancer
+                rule. Changing this forces a new resource to be created.
+            name: |-
+                - (Required) Name of the loadbalancer rule.
+                Changing this forces a new resource to be created.
+            network_id: |-
+                - (Optional) The network ID this rule will be created for.
+                Required when public IP address is not associated with any network yet
+                (VPC case).
+            private_port: |-
+                - (Required) The private port of the private IP address
+                (virtual machine) where the network traffic will be load balanced to.
+                Changing this forces a new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            protocol: |-
+                - (Optional) Load balancer protocol (tcp, udp, tcp-proxy).
+                Changing this forces a new resource to be created.
+            public_port: |-
+                - (Required) The public port from where the network traffic
+                will be load balanced from. Changing this forces a new resource to be
+                created.
+        importStatements: []
+    cloudstack_network:
+        subCategory: ""
+        description: Creates a network.
+        name: cloudstack_network
+        title: cloudstack_network
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "cidr": "10.0.0.0/16",
+                  "name": "test-network",
+                  "network_offering": "Default Network",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            acl_id: |-
+                - (Optional) The ACL ID that should be attached to the network or
+                none if you do not want to attach an ACL. You can dynamically attach and
+                swap ACL's, but if you want to detach an attached ACL and revert to using
+                none, this will force a new resource to be created. (defaults none)
+            cidr: |-
+                - (Required) The CIDR block for the network. Changing this forces a new
+                resource to be created.
+            display_text: '- (Optional) The display text of the network.'
+            endip: |-
+                - (Optional) End of the IP block that will be available on the
+                network. Defaults to the last available IP in the range.
+            gateway: |-
+                - (Optional) Gateway that will be provided to the instances in this
+                network. Defaults to the first usable IP in the range.
+            id: '- The ID of the network.'
+            name: '- (Required) The name of the network.'
+            network_domain: '- (Optional) DNS domain for the network.'
+            network_offering: |-
+                - (Required) The name or ID of the network offering to use
+                for this network.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            source_nat_ip: |-
+                - (Optional) If set to true a public IP will be associated
+                with the network. This is mainly used when the network supports the source
+                NAT service which claims the first associated IP address. This prevents the
+                ability to manage the IP address as an independent entity.
+            source_nat_ip_address: '- The associated source NAT IP.'
+            source_nat_ip_id: '- The ID of the associated source NAT IP.'
+            startip: |-
+                - (Optional) Start of the IP block that will be available on the
+                network. Defaults to the second available IP in the range.
+            vlan: |-
+                - (Optional) The VLAN number (1-4095) the network will use. This might be
+                required by the Network Offering if specifyVlan=true is set. Only the ROOT
+                admin can set this value.
+            vpc_id: |-
+                - (Optional) The VPC ID in which to create this network. Changing
+                this forces a new resource to be created.
+            zone: |-
+                - (Required) The name or ID of the zone where this network will be
+                available. Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_network.default 36619b20-5584-43bf-9a84-e242bacd5582
+            - terraform import cloudstack_network.default my-project/36619b20-5584-43bf-9a84-e242bacd5582
+    cloudstack_network_acl:
+        subCategory: ""
+        description: Creates a Network ACL for the given VPC.
+        name: cloudstack_network_acl
+        title: cloudstack_network_acl
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "name": "test-acl",
+                  "vpc_id": "76f6e8dc-07e3-4971-b2a2-8831b0cc4cb4"
+                }
+        argumentDocs:
+            description: |-
+                - (Optional) The description of the ACL. Changing this forces a
+                new resource to be created.
+            id: '- The ID of the Network ACL'
+            name: |-
+                - (Required) The name of the ACL. Changing this forces a new resource
+                to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            vpc_id: |-
+                - (Required) The ID of the VPC to create this ACL for. Changing this
+                forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_network_acl.default e8b5982a-1b50-4ea9-9920-6ea2290c7359
+            - terraform import cloudstack_network_acl.default my-project/e8b5982a-1b50-4ea9-9920-6ea2290c7359
+    cloudstack_network_acl_rule:
+        subCategory: ""
+        description: Creates network ACL rules for a given network ACL.
+        name: cloudstack_network_acl_rule
+        title: cloudstack_network_acl_rule
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "acl_id": "f3843ce0-334c-4586-bbd3-0c2e2bc946c6",
+                  "rule": [
+                    {
+                      "action": "allow",
+                      "cidr_list": [
+                        "10.0.0.0/8"
+                      ],
+                      "ports": [
+                        "80",
+                        "1000-2000"
+                      ],
+                      "protocol": "tcp",
+                      "traffic_type": "ingress"
+                    }
+                  ]
+                }
+        argumentDocs:
+            acl_id: |-
+                - (Required) The network ACL ID for which to create the rules.
+                Changing this forces a new resource to be created.
+            id: '- The ACL ID for which the rules are created.'
+            managed: |-
+                - (Optional) USE WITH CAUTION! If enabled all the firewall rules for
+                this network ACL will be managed by this resource. This means it will delete
+                all firewall rules that are not in your config! (defaults false)
+            parallelism: |-
+                (Optional) Specifies how much rules will be created or deleted
+                concurrently. (defaults 2)
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            rule: |-
+                - (Optional) Can be specified multiple times. Each rule block supports
+                fields documented below. If managed = false at least one rule is required!
+            rule.action: |-
+                - (Optional) The action for the rule. Valid options are: allow and
+                deny (defaults allow).
+            rule.cidr_list: '- (Required) A CIDR list to allow access to the given ports.'
+            rule.icmp_code: |-
+                - (Optional) The ICMP code to allow, or -1 to allow any. This
+                can only be specified if the protocol is ICMP. (defaults 0)
+            rule.icmp_type: |-
+                - (Optional) The ICMP type to allow, or -1 to allow any. This
+                can only be specified if the protocol is ICMP. (defaults 0)
+            rule.ports: |-
+                - (Optional) List of ports and/or port ranges to allow. This can only
+                be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+            rule.protocol: |-
+                - (Required) The name of the protocol to allow. Valid options are:
+                tcp, udp, icmp, all or a valid protocol number.
+            rule.traffic_type: |-
+                - (Optional) The traffic type for the rule. Valid options are:
+                ingress or egress (defaults ingress).
+        importStatements: []
+    cloudstack_network_offering:
+        subCategory: ""
+        description: Creates a Network Offering
+        name: cloudstack_network_offering
+        title: cloudstack_network_offering
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "display_text": "Example Network Offering",
+                  "guest_ip_type": "Shared",
+                  "name": "example-network-offering",
+                  "traffic_type": "Guest"
+                }
+        argumentDocs:
+            display_text: '- (Required) The display text of the network offering.'
+            guest_ip_type: '- (Required) The type of IP address allocation for the network offering. Possible values are "Shared" or "Isolated".'
+            id: '- The ID of the network offering.'
+            name: '- (Required) The name of the network offering.'
+            traffic_type: '- (Required) The type of traffic for the network offering. Possible values are "Guest" or "Management".'
+        importStatements:
+            - $ terraform import cloudstack_network_offering.example <NETWORKOFFERINGID>
+    cloudstack_nic:
+        subCategory: ""
+        description: Creates an additional NIC to add a VM to the specified network.
+        name: cloudstack_nic
+        title: cloudstack_nic
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "ip_address": "192.168.1.1",
+                  "network_id": "6eb22f91-7454-4107-89f4-36afcdf33021",
+                  "virtual_machine_id": "f8141e2f-4e7e-4c63-9362-986c908b7ea7"
+                }
+        argumentDocs:
+            id: '- The ID of the NIC.'
+            ip_address: |-
+                - (Optional) The IP address to assign to the NIC. Changing this
+                forces a new resource to be created.
+            network_id: |-
+                - (Required) The ID of the network to plug the NIC into. Changing
+                this forces a new resource to be created.
+            virtual_machine_id: |-
+                - (Required) The ID of the virtual machine to which to
+                attach the NIC. Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_port_forward:
+        subCategory: ""
+        description: Creates port forwards.
+        name: cloudstack_port_forward
+        title: cloudstack_port_forward
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "forward": [
+                    {
+                      "private_port": 80,
+                      "protocol": "tcp",
+                      "public_port": 8080,
+                      "virtual_machine_id": "f8141e2f-4e7e-4c63-9362-986c908b7ea7"
                     }
                   ],
-                  "provisioner": {
-                    "remote-exec": [
-                      {
-                        "inline": [
-                          "bootstrap-cluster.sh ${join(\" \",\n      aws_instance.cluster[*].private_ip)}"
-                        ]
-                      }
-                    ]
-                  },
-                  "triggers": {
-                    "cluster_instance_ids": "${join(\",\", aws_instance.cluster[*].id)}"
-                  }
+                  "ip_address_id": "30b21801-d4b3-4174-852b-0c0f30bdbbfb"
                 }
-              dependencies:
-                aws_instance.cluster: |-
-                    {
-                      "ami": "ami-0dcc1e21636832c5d",
-                      "count": 3,
-                      "instance_type": "m5.large"
-                    }
         argumentDocs:
-            id: (String) This is set to a random value at create time.
-            triggers: (Map of String) A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
+            forward: |-
+                - (Required) Can be specified multiple times. Each forward block supports
+                fields documented below.
+            forward.private_port: '- (Required) The private port to forward to.'
+            forward.protocol: |-
+                - (Required) The name of the protocol to allow. Valid options are:
+                tcp and udp.
+            forward.public_port: '- (Required) The public port to forward from.'
+            forward.virtual_machine_id: '- (Required) The ID of the virtual machine to forward to.'
+            forward.vm_guest_ip: |-
+                - (Optional) The virtual machine IP address for the port
+                forwarding rule (useful when the virtual machine has secondairy NICs
+                or IP addresses).
+            id: '- The ID of the IP address for which the port forwards are created.'
+            ip_address_id: |-
+                - (Required) The IP address ID for which to create the port
+                forwards. Changing this forces a new resource to be created.
+            managed: |-
+                - (Optional) USE WITH CAUTION! If enabled all the port forwards for
+                this IP address will be managed by this resource. This means it will delete
+                all port forwards that are not in your config! (defaults false)
+            project: |-
+                - (Optional) The name or ID of the project to create this port forward
+                in. Changing this forces a new resource to be created.
+            vm_guest_ip: |-
+                - The IP address of the virtual machine that is used
+                for the port forwarding rule.
         importStatements: []
+    cloudstack_private_gateway:
+        subCategory: ""
+        description: Creates a private gateway.
+        name: cloudstack_private_gateway
+        title: cloudstack_private_gateway
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "gateway": "10.0.0.1",
+                  "ip_address": "10.0.0.2",
+                  "netmask": "255.255.255.252",
+                  "vlan": "200",
+                  "vpc_id": "76f6e8dc-07e3-4971-b2a2-8831b0cc4cb4"
+                }
+        argumentDocs:
+            acl_id: '- (Required) The ACL ID that should be attached to the network.'
+            gateway: |-
+                - (Required) the gateway of the Private gateway. Changing this
+                forces a new resource to be created.
+            id: '- The ID of the private gateway.'
+            ip_address: |-
+                - (Required) the IP address of the Private gateway. Changing this forces
+                a new resource to be created.
+            netmask: |-
+                - (Required) The netmask of the Private gateway. Changing
+                this forces a new resource to be created.
+            network_offering: |-
+                - (Optional) The name or ID of the network offering to use for
+                the private gateways network connection.
+            physical_network_id: |-
+                - (Optional) The ID of the physical network this private
+                gateway belongs to.
+            vlan: '- (Required) The VLAN number (1-4095) the network will use.'
+            vpc_id: |-
+                - (Required) The VPC ID in which to create this Private gateway. Changing
+                this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_private_gateway.default e42a24d2-46cb-4b18-9d41-382582fad309
+    cloudstack_secondary_ipaddress:
+        subCategory: ""
+        description: Assigns a secondary IP to a NIC.
+        name: cloudstack_secondary_ipaddress
+        title: cloudstack_secondary_ipaddress
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "virtual_machine_id": "server-1"
+                }
+        argumentDocs:
+            id: '- The secondary IP address ID.'
+            ip_address: |-
+                - (Optional) The IP address to bind the to NIC. If not supplied
+                an IP address will be selected randomly. Changing this forces a new resource
+                to be	created.
+            nic_id: |-
+                - (Optional) The NIC ID to which you want to attach the secondary IP
+                address. Changing this forces a new resource to be created (defaults to the
+                ID of the primary NIC)
+            virtual_machine_id: |-
+                - (Required) The ID of the virtual machine to which you
+                want to attach the secondary IP address. Changing this forces a new resource
+                to be created.
+        importStatements: []
+    cloudstack_security_group:
+        subCategory: ""
+        description: Creates a security group.
+        name: cloudstack_security_group
+        title: cloudstack_security_group
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "description": "Allow access to HTTP and HTTPS",
+                  "name": "allow_web"
+                }
+        argumentDocs:
+            description: |-
+                - (Optional) The description of the security group. Changing
+                this forces a new resource to be created.
+            id: '- The ID of the security group.'
+            name: |-
+                - (Required) The name of the security group. Changing this forces a
+                new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to create this security
+                group in. Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_security_group.default e54970f1-f563-46dd-a365-2b2e9b78c54b
+            - terraform import cloudstack_security_group.default my-project/e54970f1-f563-46dd-a365-2b2e9b78c54b
+    cloudstack_security_group_rule:
+        subCategory: ""
+        description: Authorizes and revokes both ingress and egress rulea for a given security group.
+        name: cloudstack_security_group_rule
+        title: cloudstack_security_group_rule
+        examples:
+            - name: web
+              manifest: |-
+                {
+                  "rule": [
+                    {
+                      "cidr_list": [
+                        "0.0.0.0/0"
+                      ],
+                      "ports": [
+                        "80",
+                        "443"
+                      ],
+                      "protocol": "tcp"
+                    },
+                    {
+                      "cidr_list": [
+                        "192.168.0.0/24",
+                        "192.168.1.0/25"
+                      ],
+                      "ports": [
+                        "80-90",
+                        "443"
+                      ],
+                      "protocol": "tcp",
+                      "traffic_type": "egress",
+                      "user_security_group_list": [
+                        "group01",
+                        "group02"
+                      ]
+                    }
+                  ],
+                  "security_group_id": "e340b62b-fbc2-4081-8f67-e40455c44bce"
+                }
+        argumentDocs:
+            id: '- The security group ID for which the rules are created.'
+            parallelism: |-
+                (Optional) Specifies how much rules will be created or deleted
+                concurrently. (defaults 2)
+            project: |-
+                - (Optional) The name or ID of the project in which the security
+                group is created. Changing this forces a new resource to be created.
+            rule: |-
+                - (Required) Can be specified multiple times. Each rule block supports
+                fields documented below.
+            rule.cidr_list: '- (Optional) A CIDR list to allow access to the given ports.'
+            rule.icmp_code: |-
+                - (Optional) The ICMP code to allow, or -1 to allow any. This
+                can only be specified if the protocol is ICMP. (defaults 0)
+            rule.icmp_type: |-
+                - (Optional) The ICMP type to allow, or -1 to allow any. This
+                can only be specified if the protocol is ICMP. (defaults 0)
+            rule.ports: |-
+                - (Optional) List of ports and/or port ranges to allow. This can only
+                be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+            rule.protocol: |-
+                - (Required) The name of the protocol to allow. Valid options are:
+                tcp, udp, icmp, all or a valid protocol number.
+            rule.traffic_type: |-
+                - (Optional) The traffic type for the rule. Valid options are:
+                ingress or egress. (defaults ingress)
+            rule.user_security_group_list: |-
+                - (Optional) A list of security groups to apply
+                the rules to.
+            security_group_id: |-
+                - (Required) The security group ID for which to create
+                the rules. Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_service_offering:
+        subCategory: ""
+        description: Creates a Service Offering
+        name: cloudstack_service_offering
+        title: ""
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "display_text": "Example Service Offering",
+                  "name": "example-service-offering"
+                }
+        argumentDocs:
+            cpu_number: |-
+                - (Optional) The number of CPU cores.
+                Changing this forces a new resource to be created.
+            cpu_speed: |-
+                - (Optional) The speed of the CPU in Mhz.
+                Changing this forces a new resource to be created.
+            display_text: '- (Optional) The display text of the service offering.'
+            host_tags: '- (Optional) The host tags for the service offering.'
+            id: '- The ID of the service offering.'
+            limit_cpu_use: |-
+                - (Optional) Restrict the CPU usage to committed service offering.
+                Changing this forces a new resource to be created.
+            memory: |-
+                - (Optional) Memory reserved by the VM in MB.
+                Changing this forces a new resource to be created.
+            name: |-
+                - (Required) Name of the service offering.
+                Changing this forces a new resource to be created.
+            offer_ha: |-
+                - (Optional) The HA for the service offering.
+                Changing this forces a new resource to be created.
+            storage_type: |-
+                - (Optional) The storage type of the service offering. Values are local and shared.
+                Changing this forces a new resource to be created.
+        importStatements:
+            - $ terraform import cloudstack_service_offering.example <SERVICEOFFERINGID>
+    cloudstack_ssh_keypair:
+        subCategory: ""
+        description: Creates or registers an SSH key pair.
+        name: cloudstack_ssh_keypair
+        title: cloudstack_ssh_keypair
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "name": "myKey",
+                  "project": "myProject",
+                  "public_key": "${file(\"~/.ssh/id_rsa.pub\")}"
+                }
+        argumentDocs:
+            fingerprint: '- The fingerprint of the public key specified or created.'
+            id: '- The key pair ID.'
+            name: |-
+                - (Required) The name of the SSH key pair. This is a unique value
+                within a CloudStack account. Changing this forces a new resource to be
+                created.
+            private_key: |-
+                - The private key generated by CloudStack. Only available
+                if CloudStack generated the key pair.
+            project: |-
+                - (Optional) The name or ID of the project to register this
+                key to. Changing this forces a new resource to be created.
+            public_key: |-
+                - (Optional) The public key to register with CloudStack. If
+                this is omitted, CloudStack will generate a new key pair. The key can
+                be loaded from a file on disk using the
+                file() function.
+                Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_static_nat:
+        subCategory: ""
+        description: Enables static NAT for a given IP address.
+        name: cloudstack_static_nat
+        title: cloudstack_static_nat
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "ip_address_id": "f8141e2f-4e7e-4c63-9362-986c908b7ea7",
+                  "virtual_machine_id": "6ca2a163-bc68-429c-adc8-ab4a620b1bb3"
+                }
+        argumentDocs:
+            id: '- The static nat ID.'
+            ip_address_id: |-
+                - (Required) The public IP address ID for which static
+                NAT will be enabled. Changing this forces a new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            virtual_machine_id: |-
+                - (Required) The virtual machine ID to enable the
+                static NAT feature for. Changing this forces a new resource to be created.
+            vm_guest_ip: |-
+                - (Optional) The virtual machine IP address to forward the
+                static NAT traffic to (useful when the virtual machine has secondary
+                NICs or IP addresses). Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_static_route:
+        subCategory: ""
+        description: Creates a static route.
+        name: cloudstack_static_route
+        title: cloudstack_static_route
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "cidr": "10.0.0.0/16",
+                  "gateway_id": "76f607e3-e8dc-4971-8831-b2a2b0cc4cb4"
+                }
+        argumentDocs:
+            cidr: |-
+                - (Required) The CIDR for the static route. Changing this forces
+                a new resource to be created.
+            gateway_id: |-
+                - (Required) The ID of the Private gateway. Changing this forces
+                a new resource to be created.
+            id: '- The ID of the static route.'
+        importStatements: []
+    cloudstack_template:
+        subCategory: ""
+        description: Registers an existing template into the CloudStack cloud.
+        name: cloudstack_template
+        title: cloudstack_template
+        examples:
+            - name: centos64
+              manifest: |-
+                {
+                  "format": "VHD",
+                  "hypervisor": "XenServer",
+                  "name": "CentOS 6.4 x64",
+                  "os_type": "CentOS 6.4 (64bit)",
+                  "url": "http://someurl.com/template.vhd",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            display_text: '- (Optional) The display name of the template.'
+            format: |-
+                - (Required) The format of the template. Valid values are QCOW2,
+                RAW, and VHD.
+            hypervisor: |-
+                - (Required) The target hypervisor for the template. Changing
+                this forces a new resource to be created.
+            id: '- The template ID.'
+            is_dynamically_scalable: |-
+                - (Optional) Set to indicate if the template contains
+                tools to support dynamic scaling of VM cpu/memory (defaults false)
+            is_extractable: |-
+                - (Optional) Set to indicate if the template is extractable
+                (defaults false)
+            is_featured: |-
+                - (Optional) Set to indicate if the template is featured
+                (defaults false)
+            is_public: |-
+                - (Optional) Set to indicate if the template is available for
+                all accounts (defaults true)
+            is_ready: '- Set to "true" once the template is ready for use.'
+            is_ready_timeout: |-
+                - (Optional) The maximum time in seconds to wait until the
+                template is ready for use (defaults 300 seconds)
+            name: '- (Required) The name of the template.'
+            os_type: |-
+                - (Required) The OS Type that best represents the OS of this
+                template.
+            password_enabled: |-
+                - (Optional) Set to indicate if the template should be
+                password enabled (defaults false)
+            project: |-
+                - (Optional) The name or ID of the project to create this template for.
+                Changing this forces a new resource to be created.
+            url: |-
+                - (Required) The URL of where the template is hosted. Changing this
+                forces a new resource to be created.
+            zone: |-
+                - (Optional) The name or ID of the zone where this template will be created.
+                Changing this forces a new resource to be created.
+        importStatements: []
+    cloudstack_user:
+        subCategory: ""
+        description: Creates a User
+        name: cloudstack_user
+        title: ""
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "account": "example-account",
+                  "email": "user@example.com",
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "password": "securepassword",
+                  "username": "jdoe"
+                }
+        argumentDocs:
+            account: '- (Optional) The account the user belongs to.'
+            email: '- (Required) The email address of the user.'
+            first_name: '- (Required) The first name of the user.'
+            last_name: '- (Required) The last name of the user.'
+            password: '- (Required) The password for the user.'
+            username: '- (Required) The username of the user.'
+        importStatements:
+            - $ terraform import cloudstack_user.example <USERID>
+    cloudstack_volume:
+        subCategory: ""
+        description: Creates a Volume
+        name: cloudstack_volume
+        title: cloudstack_volume
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "disk_offering_id": "a6f7e5fb-1b9a-417e-a46e-7e3d715f34d3",
+                  "name": "example-volume",
+                  "zone_id": "b0fcd7cc-5e14-499d-a2ff-ecf49840f1ab"
+                }
+        argumentDocs:
+            disk_offering_id: '- (Required) The ID of the disk offering for the volume. Forces new resource.'
+            id: '- The ID of the volume.'
+            name: '- (Required) The name of the volume. Forces new resource.'
+            zone_id: '- (Required) The ID of the zone where the volume will be created. Forces new resource.'
+        importStatements:
+            - $ terraform import cloudstack_volume.example <VOLUMEID>
+    cloudstack_vpc:
+        subCategory: ""
+        description: Creates a VPC.
+        name: cloudstack_vpc
+        title: cloudstack_vpc
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "cidr": "10.0.0.0/16",
+                  "name": "test-vpc",
+                  "vpc_offering": "Default VPC Offering",
+                  "zone": "zone-1"
+                }
+        argumentDocs:
+            cidr: |-
+                - (Required) The CIDR block for the VPC. Changing this forces a new
+                resource to be created.
+            display_text: '- (Optional) The display text of the VPC.'
+            id: '- The ID of the VPC.'
+            name: '- (Required) The name of the VPC.'
+            network_domain: |-
+                - (Optional) The default DNS domain for networks created in
+                this VPC. Changing this forces a new resource to be created.
+            project: |-
+                - (Optional) The name or ID of the project to deploy this
+                instance to. Changing this forces a new resource to be created.
+            source_nat_ip: '- The source NAT IP assigned to the VPC.'
+            vpc_offering: |-
+                - (Required) The name or ID of the VPC offering to use for this VPC.
+                Changing this forces a new resource to be created.
+            zone: |-
+                - (Required) The name or ID of the zone where this disk volume will be
+                available. Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_vpc.default 84b23264-917a-4712-b8bf-cd7604db43b0
+            - terraform import cloudstack_vpc.default my-project/84b23264-917a-4712-b8bf-cd7604db43b0
+    cloudstack_vpn_connection:
+        subCategory: ""
+        description: Creates a site to site VPN connection.
+        name: cloudstack_vpn_connection
+        title: cloudstack_vpn_connection
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "customer_gateway_id": "8dab9381-ae73-48b8-9a3d-c460933ef5f7",
+                  "vpn_gateway_id": "a7900060-f8a8-44eb-be15-ea54cf499703"
+                }
+        argumentDocs:
+            customer_gateway_id: |-
+                - (Required) The Customer Gateway ID to connect.
+                Changing this forces a new resource to be created.
+            id: '- The ID of the VPN Connection.'
+            vpn_gateway_id: |-
+                - (Required) The VPN Gateway ID to connect. Changing
+                this forces a new resource to be created.
+        importStatements: []
+    cloudstack_vpn_customer_gateway:
+        subCategory: ""
+        description: Creates a site to site VPN local customer gateway.
+        name: cloudstack_vpn_customer_gateway
+        title: cloudstack_vpn_customer_gateway
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "cidr": "10.0.0.0/8",
+                  "esp_policy": "aes256-sha1;modp1024",
+                  "gateway": "192.168.0.1",
+                  "ike_policy": "aes256-sha1;modp1024",
+                  "ipsec_psk": "terraform",
+                  "name": "test-vpc"
+                }
+        argumentDocs:
+            cidr: '- (Required) The CIDR block that needs to be routed through this gateway.'
+            dpd: '- (Optional) If DPD is enabled for the related VPN connection (defaults false)'
+            esp_lifetime: |-
+                - (Optional) The ESP lifetime of phase 2 VPN connection to this
+                VPN Customer Gateway in seconds (defaults 86400)
+            esp_policy: '- (Required) The ESP policy to use for this VPN Customer Gateway.'
+            gateway: '- (Required) The public IP address of the related VPN Gateway.'
+            id: '- The ID of the VPN Customer Gateway.'
+            ike_lifetime: |-
+                - (Optional) The IKE lifetime of phase 2 VPN connection to this
+                VPN Customer Gateway in seconds (defaults 86400)
+            ike_policy: '- (Required) The IKE policy to use for this VPN Customer Gateway.'
+            ipsec_psk: '- (Required) The IPSEC pre-shared key used for this gateway.'
+            name: '- (Required) The name of the VPN Customer Gateway.'
+            project: |-
+                - (Optional) The name or ID of the project to create this VPN Customer
+                Gateway in. Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_vpn_customer_gateway.default 741a7fca-1d05-4bb6-9290-1008300f0e5a
+            - terraform import cloudstack_vpn_customer_gateway.default my-project/741a7fca-1d05-4bb6-9290-1008300f0e5a
+    cloudstack_vpn_gateway:
+        subCategory: ""
+        description: Creates a site to site VPN local gateway.
+        name: cloudstack_vpn_gateway
+        title: cloudstack_vpn_gateway
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "vpc_id": "f8141e2f-4e7e-4c63-9362-986c908b7ea7"
+                }
+        argumentDocs:
+            id: '- The ID of the VPN Gateway.'
+            public_ip: '- The public IP address associated with the VPN Gateway.'
+            vpc_id: |-
+                - (Required) The ID of the VPC for which to create the VPN Gateway.
+                Changing this forces a new resource to be created.
+        importStatements:
+            - terraform import cloudstack_vpn_gateway.default 49cf1821-3b9f-4627-be19-8a15ffec508d
+    cloudstack_zone:
+        subCategory: ""
+        description: Creates a Zone
+        name: cloudstack_zone
+        title: cloudstack_zone
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "dns1": "8.8.8.8",
+                  "internal_dns1": "8.8.4.4",
+                  "name": "example-zone",
+                  "network_type": "Basic"
+                }
+        argumentDocs:
+            dns1: '- (Required) The DNS server  1 for the zone.'
+            id: '- The ID of the zone.'
+            internal_dns1: '- (Required) The internal DNS server  1 for the zone.'
+            name: '- (Required) The name of the zone.'
+            network_type: '- (Required) The type of network to use for the zone.'
+        importStatements:
+            - $ terraform import cloudstack_zone.example <ZONEID>

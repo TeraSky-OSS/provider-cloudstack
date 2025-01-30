@@ -1,0 +1,13 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: Ipaddress
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/ipaddress
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    networkIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
