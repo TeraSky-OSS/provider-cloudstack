@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: provider-cloudstack
 spec:
-  package: terasky/provider-cloudstack:v0.1.0
+  package: ghcr.io/terasky-oss/provider-cloudstack:v0.0.0-7.g11821bb
