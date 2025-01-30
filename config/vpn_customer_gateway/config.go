@@ -1,3 +1,4 @@
+//nolint:golint
 /*
 Copyright 2022 Upbound Inc.
 */
