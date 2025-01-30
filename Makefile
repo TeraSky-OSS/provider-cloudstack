@@ -14,7 +14,7 @@ export TERRAFORM_PROVIDER_SOURCE ?= cloudstack/cloudstack
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/terasky-oss/terraform-provider-cloudstack
 export TERRAFORM_PROVIDER_VERSION ?= 0.5.0
 export TERRAFORM_PROVIDER_DOWNLOAD_NAME ?= terraform-provider-cloudstack
-export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://github.com/cloudstack/terraform-provider-cloudstack/releases/download/$(TERRAFORM_PROVIDER_VERSION)
+export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://github.com/cloudstack/terraform-provider-cloudstack/releases/download/v$(TERRAFORM_PROVIDER_VERSION)
 export TERRAFORM_NATIVE_PROVIDER_BINARY ?= terraform-provider-cloudstack_0.5.0
 export TERRAFORM_DOCS_PATH ?= website/docs/r
 
