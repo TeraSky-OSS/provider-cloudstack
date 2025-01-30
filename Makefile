@@ -63,17 +63,17 @@ UPTEST_VERSION = v0.5.0
 # ====================================================================================
 # Setup Images
 
-REGISTRY_ORGS ?= ghcr.io/vrabbi
+REGISTRY_ORGS ?= ghcr.io/TeraSky-OSS
 IMAGES = $(PROJECT_NAME)
 -include build/makelib/imagelight.mk
 
 # ====================================================================================
 # Setup XPKG
 
-XPKG_REG_ORGS ?= ghcr.io/vrabbi
+XPKG_REG_ORGS ?= ghcr.io/TeraSky-OSS
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
-XPKG_REG_ORGS_NO_PROMOTE ?= ghcr.io/vrabbi
+XPKG_REG_ORGS_NO_PROMOTE ?= ghcr.io/TeraSky-OSS
 XPKGS = $(PROJECT_NAME)
 -include build/makelib/xpkg.mk
 
