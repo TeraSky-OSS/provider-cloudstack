@@ -199,6 +199,10 @@ jobs:
 
   publish-artifacts:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      packages: write
     needs:
       - detect-noop
       - report-breaking-changes
