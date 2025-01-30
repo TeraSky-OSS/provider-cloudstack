@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: nics.network.terasky.com
+  name: accounts.system.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Nic
-    listKind: NicList
-    plural: nics
-    singular: nic
+    kind: Account
+    listKind: AccountList
+    plural: accounts
+    singular: account
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Nic is the Schema for the Nics API. Creates an additional NIC
-          to add a VM to the specified network.
+        description: Account is the Schema for the Accounts API. Creates a Account
         properties:
           apiVersion:
             description: |-
@@ -55,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: NicSpec defines the desired state of Nic
+            description: AccountSpec defines the desired state of Account
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,20 +72,31 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to the NIC. Changing this
-                      forces a new resource to be created.
+                  account:
+                    description: The account name. If not specified, the username
+                      will be used as the account name.
                     type: string
-                  networkId:
-                    description: |-
-                      The ID of the network to plug the NIC into. Changing
-                      this forces a new resource to be created.
+                  accountType:
+                    description: The account type. Possible values are 0 for regular
+                      user, 1 for admin, and 2 for domain admin.
+                    type: number
+                  email:
+                    description: The email address of the account owner.
                     type: string
-                  virtualMachineId:
-                    description: |-
-                      The ID of the virtual machine to which to
-                      attach the NIC. Changing this forces a new resource to be created.
+                  firstName:
+                    description: The first name of the account owner.
+                    type: string
+                  lastName:
+                    description: The last name of the account owner.
+                    type: string
+                  password:
+                    description: The password for the account.
+                    type: string
+                  roleId:
+                    description: The ID of the role associated with the account.
+                    type: string
+                  username:
+                    description: The username of the account.
                     type: string
                 type: object
               initProvider:
@@ -102,20 +112,31 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to the NIC. Changing this
-                      forces a new resource to be created.
+                  account:
+                    description: The account name. If not specified, the username
+                      will be used as the account name.
                     type: string
-                  networkId:
-                    description: |-
-                      The ID of the network to plug the NIC into. Changing
-                      this forces a new resource to be created.
+                  accountType:
+                    description: The account type. Possible values are 0 for regular
+                      user, 1 for admin, and 2 for domain admin.
+                    type: number
+                  email:
+                    description: The email address of the account owner.
                     type: string
-                  virtualMachineId:
-                    description: |-
-                      The ID of the virtual machine to which to
-                      attach the NIC. Changing this forces a new resource to be created.
+                  firstName:
+                    description: The first name of the account owner.
+                    type: string
+                  lastName:
+                    description: The last name of the account owner.
+                    type: string
+                  password:
+                    description: The password for the account.
+                    type: string
+                  roleId:
+                    description: The ID of the role associated with the account.
+                    type: string
+                  username:
+                    description: The username of the account.
                     type: string
                 type: object
               managementPolicies:
@@ -286,36 +307,67 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.networkId is a required parameter
+            - message: spec.forProvider.accountType is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.networkId)
-                || (has(self.initProvider) && has(self.initProvider.networkId))'
-            - message: spec.forProvider.virtualMachineId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.accountType)
+                || (has(self.initProvider) && has(self.initProvider.accountType))'
+            - message: spec.forProvider.email is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.virtualMachineId)
-                || (has(self.initProvider) && has(self.initProvider.virtualMachineId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.email)
+                || (has(self.initProvider) && has(self.initProvider.email))'
+            - message: spec.forProvider.firstName is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.firstName)
+                || (has(self.initProvider) && has(self.initProvider.firstName))'
+            - message: spec.forProvider.lastName is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.lastName)
+                || (has(self.initProvider) && has(self.initProvider.lastName))'
+            - message: spec.forProvider.password is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.password)
+                || (has(self.initProvider) && has(self.initProvider.password))'
+            - message: spec.forProvider.roleId is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.roleId)
+                || (has(self.initProvider) && has(self.initProvider.roleId))'
+            - message: spec.forProvider.username is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.username)
+                || (has(self.initProvider) && has(self.initProvider.username))'
           status:
-            description: NicStatus defines the observed state of Nic.
+            description: AccountStatus defines the observed state of Account.
             properties:
               atProvider:
                 properties:
+                  account:
+                    description: The account name. If not specified, the username
+                      will be used as the account name.
+                    type: string
+                  accountType:
+                    description: The account type. Possible values are 0 for regular
+                      user, 1 for admin, and 2 for domain admin.
+                    type: number
+                  email:
+                    description: The email address of the account owner.
+                    type: string
+                  firstName:
+                    description: The first name of the account owner.
+                    type: string
                   id:
-                    description: The ID of the NIC.
+                    description: The ID of the account.
                     type: string
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to the NIC. Changing this
-                      forces a new resource to be created.
+                  lastName:
+                    description: The last name of the account owner.
                     type: string
-                  networkId:
-                    description: |-
-                      The ID of the network to plug the NIC into. Changing
-                      this forces a new resource to be created.
+                  password:
+                    description: The password for the account.
                     type: string
-                  virtualMachineId:
-                    description: |-
-                      The ID of the virtual machine to which to
-                      attach the NIC. Changing this forces a new resource to be created.
+                  roleId:
+                    description: The ID of the role associated with the account.
+                    type: string
+                  username:
+                    description: The username of the account.
                     type: string
                 type: object
               conditions:

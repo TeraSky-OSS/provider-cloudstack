@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: routes.network.terasky.com
+  name: customergateways.network.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Route
-    listKind: RouteList
-    plural: routes
-    singular: route
+    kind: CustomerGateway
+    listKind: CustomerGatewayList
+    plural: customergateways
+    singular: customergateway
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Route is the Schema for the Routes API. Creates a static route.
+        description: CustomerGateway is the Schema for the CustomerGateways API. Creates
+          a site to site VPN local customer gateway.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: RouteSpec defines the desired state of Route
+            description: CustomerGatewaySpec defines the desired state of CustomerGateway
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,14 +74,42 @@ spec:
               forProvider:
                 properties:
                   cidr:
-                    description: |-
-                      The CIDR for the static route. Changing this forces
-                      a new resource to be created.
+                    description: The CIDR block that needs to be routed through this
+                      gateway.
                     type: string
-                  gatewayId:
+                  dpd:
+                    description: If DPD is enabled for the related VPN connection
+                      (defaults false)
+                    type: boolean
+                  espLifetime:
                     description: |-
-                      The ID of the Private gateway. Changing this forces
-                      a new resource to be created.
+                      The ESP lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  espPolicy:
+                    description: The ESP policy to use for this VPN Customer Gateway.
+                    type: string
+                  gateway:
+                    description: The public IP address of the related VPN Gateway.
+                    type: string
+                  ikeLifetime:
+                    description: |-
+                      The IKE lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  ikePolicy:
+                    description: The IKE policy to use for this VPN Customer Gateway.
+                    type: string
+                  ipsecPsk:
+                    description: The IPSEC pre-shared key used for this gateway.
+                    type: string
+                  name:
+                    description: The name of the VPN Customer Gateway.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to create this VPN Customer
+                      Gateway in. Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -97,14 +126,42 @@ spec:
                   autoscaler.
                 properties:
                   cidr:
-                    description: |-
-                      The CIDR for the static route. Changing this forces
-                      a new resource to be created.
+                    description: The CIDR block that needs to be routed through this
+                      gateway.
                     type: string
-                  gatewayId:
+                  dpd:
+                    description: If DPD is enabled for the related VPN connection
+                      (defaults false)
+                    type: boolean
+                  espLifetime:
                     description: |-
-                      The ID of the Private gateway. Changing this forces
-                      a new resource to be created.
+                      The ESP lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  espPolicy:
+                    description: The ESP policy to use for this VPN Customer Gateway.
+                    type: string
+                  gateway:
+                    description: The public IP address of the related VPN Gateway.
+                    type: string
+                  ikeLifetime:
+                    description: |-
+                      The IKE lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  ikePolicy:
+                    description: The IKE policy to use for this VPN Customer Gateway.
+                    type: string
+                  ipsecPsk:
+                    description: The IPSEC pre-shared key used for this gateway.
+                    type: string
+                  name:
+                    description: The name of the VPN Customer Gateway.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to create this VPN Customer
+                      Gateway in. Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -279,27 +336,71 @@ spec:
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.cidr)
                 || (has(self.initProvider) && has(self.initProvider.cidr))'
-            - message: spec.forProvider.gatewayId is a required parameter
+            - message: spec.forProvider.espPolicy is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.gatewayId)
-                || (has(self.initProvider) && has(self.initProvider.gatewayId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.espPolicy)
+                || (has(self.initProvider) && has(self.initProvider.espPolicy))'
+            - message: spec.forProvider.gateway is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.gateway)
+                || (has(self.initProvider) && has(self.initProvider.gateway))'
+            - message: spec.forProvider.ikePolicy is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.ikePolicy)
+                || (has(self.initProvider) && has(self.initProvider.ikePolicy))'
+            - message: spec.forProvider.ipsecPsk is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipsecPsk)
+                || (has(self.initProvider) && has(self.initProvider.ipsecPsk))'
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
           status:
-            description: RouteStatus defines the observed state of Route.
+            description: CustomerGatewayStatus defines the observed state of CustomerGateway.
             properties:
               atProvider:
                 properties:
                   cidr:
-                    description: |-
-                      The CIDR for the static route. Changing this forces
-                      a new resource to be created.
+                    description: The CIDR block that needs to be routed through this
+                      gateway.
                     type: string
-                  gatewayId:
+                  dpd:
+                    description: If DPD is enabled for the related VPN connection
+                      (defaults false)
+                    type: boolean
+                  espLifetime:
                     description: |-
-                      The ID of the Private gateway. Changing this forces
-                      a new resource to be created.
+                      The ESP lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  espPolicy:
+                    description: The ESP policy to use for this VPN Customer Gateway.
+                    type: string
+                  gateway:
+                    description: The public IP address of the related VPN Gateway.
                     type: string
                   id:
-                    description: The ID of the static route.
+                    description: The ID of the VPN Customer Gateway.
+                    type: string
+                  ikeLifetime:
+                    description: |-
+                      The IKE lifetime of phase 2 VPN connection to this
+                      VPN Customer Gateway in seconds (defaults 86400)
+                    type: number
+                  ikePolicy:
+                    description: The IKE policy to use for this VPN Customer Gateway.
+                    type: string
+                  ipsecPsk:
+                    description: The IPSEC pre-shared key used for this gateway.
+                    type: string
+                  name:
+                    description: The name of the VPN Customer Gateway.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to create this VPN Customer
+                      Gateway in. Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: accounts.system.terasky.com
+  name: acls.network.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Account
-    listKind: AccountList
-    plural: accounts
-    singular: account
+    kind: ACL
+    listKind: ACLList
+    plural: acls
+    singular: acl
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Account is the Schema for the Accounts API. Creates a Account
+        description: ACL is the Schema for the ACLs API. Creates a Network ACL for
+          the given VPC.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: AccountSpec defines the desired state of Account
+            description: ACLSpec defines the desired state of ACL
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,31 +73,25 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  account:
-                    description: The account name. If not specified, the username
-                      will be used as the account name.
+                  description:
+                    description: |-
+                      The description of the ACL. Changing this forces a
+                      new resource to be created.
                     type: string
-                  accountType:
-                    description: The account type. Possible values are 0 for regular
-                      user, 1 for admin, and 2 for domain admin.
-                    type: number
-                  email:
-                    description: The email address of the account owner.
+                  name:
+                    description: |-
+                      The name of the ACL. Changing this forces a new resource
+                      to be created.
                     type: string
-                  firstName:
-                    description: The first name of the account owner.
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  lastName:
-                    description: The last name of the account owner.
-                    type: string
-                  password:
-                    description: The password for the account.
-                    type: string
-                  roleId:
-                    description: The ID of the role associated with the account.
-                    type: string
-                  username:
-                    description: The username of the account.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC to create this ACL for. Changing this
+                      forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -112,31 +107,25 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  account:
-                    description: The account name. If not specified, the username
-                      will be used as the account name.
+                  description:
+                    description: |-
+                      The description of the ACL. Changing this forces a
+                      new resource to be created.
                     type: string
-                  accountType:
-                    description: The account type. Possible values are 0 for regular
-                      user, 1 for admin, and 2 for domain admin.
-                    type: number
-                  email:
-                    description: The email address of the account owner.
+                  name:
+                    description: |-
+                      The name of the ACL. Changing this forces a new resource
+                      to be created.
                     type: string
-                  firstName:
-                    description: The first name of the account owner.
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  lastName:
-                    description: The last name of the account owner.
-                    type: string
-                  password:
-                    description: The password for the account.
-                    type: string
-                  roleId:
-                    description: The ID of the role associated with the account.
-                    type: string
-                  username:
-                    description: The username of the account.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC to create this ACL for. Changing this
+                      forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -307,67 +296,41 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.accountType is a required parameter
+            - message: spec.forProvider.name is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.accountType)
-                || (has(self.initProvider) && has(self.initProvider.accountType))'
-            - message: spec.forProvider.email is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.vpcId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.email)
-                || (has(self.initProvider) && has(self.initProvider.email))'
-            - message: spec.forProvider.firstName is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.firstName)
-                || (has(self.initProvider) && has(self.initProvider.firstName))'
-            - message: spec.forProvider.lastName is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.lastName)
-                || (has(self.initProvider) && has(self.initProvider.lastName))'
-            - message: spec.forProvider.password is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.password)
-                || (has(self.initProvider) && has(self.initProvider.password))'
-            - message: spec.forProvider.roleId is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.roleId)
-                || (has(self.initProvider) && has(self.initProvider.roleId))'
-            - message: spec.forProvider.username is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.username)
-                || (has(self.initProvider) && has(self.initProvider.username))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpcId)
+                || (has(self.initProvider) && has(self.initProvider.vpcId))'
           status:
-            description: AccountStatus defines the observed state of Account.
+            description: ACLStatus defines the observed state of ACL.
             properties:
               atProvider:
                 properties:
-                  account:
-                    description: The account name. If not specified, the username
-                      will be used as the account name.
-                    type: string
-                  accountType:
-                    description: The account type. Possible values are 0 for regular
-                      user, 1 for admin, and 2 for domain admin.
-                    type: number
-                  email:
-                    description: The email address of the account owner.
-                    type: string
-                  firstName:
-                    description: The first name of the account owner.
+                  description:
+                    description: |-
+                      The description of the ACL. Changing this forces a
+                      new resource to be created.
                     type: string
                   id:
-                    description: The ID of the account.
+                    description: The ID of the Network ACL
                     type: string
-                  lastName:
-                    description: The last name of the account owner.
+                  name:
+                    description: |-
+                      The name of the ACL. Changing this forces a new resource
+                      to be created.
                     type: string
-                  password:
-                    description: The password for the account.
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  roleId:
-                    description: The ID of the role associated with the account.
-                    type: string
-                  username:
-                    description: The username of the account.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC to create this ACL for. Changing this
+                      forces a new resource to be created.
                     type: string
                 type: object
               conditions:

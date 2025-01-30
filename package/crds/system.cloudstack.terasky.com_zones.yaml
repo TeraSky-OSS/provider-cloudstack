@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: offerings.network.terasky.com
+  name: zones.system.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Offering
-    listKind: OfferingList
-    plural: offerings
-    singular: offering
+    kind: Zone
+    listKind: ZoneList
+    plural: zones
+    singular: zone
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Offering is the Schema for the Offerings API. Creates a Network
-          Offering
+        description: Zone is the Schema for the Zones API. Creates a Zone
         properties:
           apiVersion:
             description: |-
@@ -55,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: OfferingSpec defines the desired state of Offering
+            description: ZoneSpec defines the desired state of Zone
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,19 +72,17 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  displayText:
-                    description: The display text of the network offering.
+                  dns1:
+                    description: The DNS server  1 for the zone.
                     type: string
-                  guestIpType:
-                    description: The type of IP address allocation for the network
-                      offering. Possible values are "Shared" or "Isolated".
+                  internalDns1:
+                    description: The internal DNS server  1 for the zone.
                     type: string
                   name:
-                    description: The name of the network offering.
+                    description: The name of the zone.
                     type: string
-                  trafficType:
-                    description: The type of traffic for the network offering. Possible
-                      values are "Guest" or "Management".
+                  networkType:
+                    description: The type of network to use for the zone.
                     type: string
                 type: object
               initProvider:
@@ -101,19 +98,17 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  displayText:
-                    description: The display text of the network offering.
+                  dns1:
+                    description: The DNS server  1 for the zone.
                     type: string
-                  guestIpType:
-                    description: The type of IP address allocation for the network
-                      offering. Possible values are "Shared" or "Isolated".
+                  internalDns1:
+                    description: The internal DNS server  1 for the zone.
                     type: string
                   name:
-                    description: The name of the network offering.
+                    description: The name of the zone.
                     type: string
-                  trafficType:
-                    description: The type of traffic for the network offering. Possible
-                      values are "Guest" or "Management".
+                  networkType:
+                    description: The type of network to use for the zone.
                     type: string
                 type: object
               managementPolicies:
@@ -284,43 +279,41 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.displayText is a required parameter
+            - message: spec.forProvider.dns1 is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.displayText)
-                || (has(self.initProvider) && has(self.initProvider.displayText))'
-            - message: spec.forProvider.guestIpType is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.dns1)
+                || (has(self.initProvider) && has(self.initProvider.dns1))'
+            - message: spec.forProvider.internalDns1 is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.guestIpType)
-                || (has(self.initProvider) && has(self.initProvider.guestIpType))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.internalDns1)
+                || (has(self.initProvider) && has(self.initProvider.internalDns1))'
             - message: spec.forProvider.name is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
                 || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.trafficType is a required parameter
+            - message: spec.forProvider.networkType is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.trafficType)
-                || (has(self.initProvider) && has(self.initProvider.trafficType))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.networkType)
+                || (has(self.initProvider) && has(self.initProvider.networkType))'
           status:
-            description: OfferingStatus defines the observed state of Offering.
+            description: ZoneStatus defines the observed state of Zone.
             properties:
               atProvider:
                 properties:
-                  displayText:
-                    description: The display text of the network offering.
-                    type: string
-                  guestIpType:
-                    description: The type of IP address allocation for the network
-                      offering. Possible values are "Shared" or "Isolated".
+                  dns1:
+                    description: The DNS server  1 for the zone.
                     type: string
                   id:
-                    description: The ID of the network offering.
+                    description: The ID of the zone.
+                    type: string
+                  internalDns1:
+                    description: The internal DNS server  1 for the zone.
                     type: string
                   name:
-                    description: The name of the network offering.
+                    description: The name of the zone.
                     type: string
-                  trafficType:
-                    description: The type of traffic for the network offering. Possible
-                      values are "Guest" or "Management".
+                  networkType:
+                    description: The type of network to use for the zone.
                     type: string
                 type: object
               conditions:

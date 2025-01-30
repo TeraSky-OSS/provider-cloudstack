@@ -1,4 +1,4 @@
-apiVersion: storage.terasky.com/v1alpha1
+apiVersion: storage.cloudstack.terasky.com/v1alpha1
 kind: Volume
 metadata:
   annotations:

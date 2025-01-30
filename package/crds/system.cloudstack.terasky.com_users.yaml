@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: volumes.storage.terasky.com
+  name: users.system.cloudstack.terasky.com
 spec:
-  group: storage.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Volume
-    listKind: VolumeList
-    plural: volumes
-    singular: volume
+    kind: User
+    listKind: UserList
+    plural: users
+    singular: user
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Volume is the Schema for the Volumes API. Creates a Volume
+        description: User is the Schema for the Users API. Creates a User
         properties:
           apiVersion:
             description: |-
@@ -54,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: VolumeSpec defines the desired state of Volume
+            description: UserSpec defines the desired state of User
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,16 +72,23 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  diskOfferingId:
-                    description: The ID of the disk offering for the volume. Forces
-                      new resource.
+                  account:
+                    description: The account the user belongs to.
                     type: string
-                  name:
-                    description: The name of the volume. Forces new resource.
+                  email:
+                    description: The email address of the user.
                     type: string
-                  zoneId:
-                    description: The ID of the zone where the volume will be created.
-                      Forces new resource.
+                  firstName:
+                    description: The first name of the user.
+                    type: string
+                  lastName:
+                    description: The last name of the user.
+                    type: string
+                  password:
+                    description: The password for the user.
+                    type: string
+                  username:
+                    description: The username of the user.
                     type: string
                 type: object
               initProvider:
@@ -97,16 +104,23 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  diskOfferingId:
-                    description: The ID of the disk offering for the volume. Forces
-                      new resource.
+                  account:
+                    description: The account the user belongs to.
                     type: string
-                  name:
-                    description: The name of the volume. Forces new resource.
+                  email:
+                    description: The email address of the user.
                     type: string
-                  zoneId:
-                    description: The ID of the zone where the volume will be created.
-                      Forces new resource.
+                  firstName:
+                    description: The first name of the user.
+                    type: string
+                  lastName:
+                    description: The last name of the user.
+                    type: string
+                  password:
+                    description: The password for the user.
+                    type: string
+                  username:
+                    description: The username of the user.
                     type: string
                 type: object
               managementPolicies:
@@ -277,36 +291,50 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.diskOfferingId is a required parameter
+            - message: spec.forProvider.email is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.diskOfferingId)
-                || (has(self.initProvider) && has(self.initProvider.diskOfferingId))'
-            - message: spec.forProvider.name is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.email)
+                || (has(self.initProvider) && has(self.initProvider.email))'
+            - message: spec.forProvider.firstName is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.zoneId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.firstName)
+                || (has(self.initProvider) && has(self.initProvider.firstName))'
+            - message: spec.forProvider.lastName is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.zoneId)
-                || (has(self.initProvider) && has(self.initProvider.zoneId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.lastName)
+                || (has(self.initProvider) && has(self.initProvider.lastName))'
+            - message: spec.forProvider.password is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.password)
+                || (has(self.initProvider) && has(self.initProvider.password))'
+            - message: spec.forProvider.username is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.username)
+                || (has(self.initProvider) && has(self.initProvider.username))'
           status:
-            description: VolumeStatus defines the observed state of Volume.
+            description: UserStatus defines the observed state of User.
             properties:
               atProvider:
                 properties:
-                  diskOfferingId:
-                    description: The ID of the disk offering for the volume. Forces
-                      new resource.
+                  account:
+                    description: The account the user belongs to.
+                    type: string
+                  email:
+                    description: The email address of the user.
+                    type: string
+                  firstName:
+                    description: The first name of the user.
                     type: string
                   id:
-                    description: The ID of the volume.
                     type: string
-                  name:
-                    description: The name of the volume. Forces new resource.
+                  lastName:
+                    description: The last name of the user.
                     type: string
-                  zoneId:
-                    description: The ID of the zone where the volume will be created.
-                      Forces new resource.
+                  password:
+                    description: The password for the user.
+                    type: string
+                  username:
+                    description: The username of the user.
                     type: string
                 type: object
               conditions:

@@ -1,4 +1,4 @@
-apiVersion: network.terasky.com/v1alpha1
+apiVersion: network.cloudstack.terasky.com/v1alpha1
 kind: Firewall
 metadata:
   annotations:
@@ -8,7 +8,7 @@ metadata:
   name: default
 spec:
   forProvider:
-    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
+    ipAddressId: 30b21801-d4b3-4174-852b-0c0f30bdbbfb
     rule:
     - cidrList:
       - 10.0.0.0/8

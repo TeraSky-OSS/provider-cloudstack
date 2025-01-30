@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: groups.system.terasky.com
+  name: domains.system.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Group
-    listKind: GroupList
-    plural: groups
-    singular: group
+    kind: Domain
+    listKind: DomainList
+    plural: domains
+    singular: domain
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Group is the Schema for the Groups API. Creates an affinity group.
+        description: Domain is the Schema for the Domains API. Creates a Domain
         properties:
           apiVersion:
             description: |-
@@ -54,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: GroupSpec defines the desired state of Group
+            description: DomainSpec defines the desired state of Domain
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,23 +72,17 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  description:
-                    description: The description of the affinity group.
+                  domainId:
+                    description: The ID of the domain.
                     type: string
                   name:
-                    description: |-
-                      The name of the affinity group. Changing this
-                      forces a new resource to be created.
+                    description: The name of the domain.
                     type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to register this
-                      affinity group to. Changing this forces a new resource to be created.
+                  networkDomain:
+                    description: The network domain for the domain.
                     type: string
-                  type:
-                    description: |-
-                      The affinity group type. Changing this
-                      forces a new resource to be created.
+                  parentDomainId:
+                    description: The ID of the parent domain.
                     type: string
                 type: object
               initProvider:
@@ -104,23 +98,17 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  description:
-                    description: The description of the affinity group.
+                  domainId:
+                    description: The ID of the domain.
                     type: string
                   name:
-                    description: |-
-                      The name of the affinity group. Changing this
-                      forces a new resource to be created.
+                    description: The name of the domain.
                     type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to register this
-                      affinity group to. Changing this forces a new resource to be created.
+                  networkDomain:
+                    description: The network domain for the domain.
                     type: string
-                  type:
-                    description: |-
-                      The affinity group type. Changing this
-                      forces a new resource to be created.
+                  parentDomainId:
+                    description: The ID of the parent domain.
                     type: string
                 type: object
               managementPolicies:
@@ -295,35 +283,25 @@ spec:
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
                 || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.type is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.type)
-                || (has(self.initProvider) && has(self.initProvider.type))'
           status:
-            description: GroupStatus defines the observed state of Group.
+            description: DomainStatus defines the observed state of Domain.
             properties:
               atProvider:
                 properties:
-                  description:
-                    description: The description of the affinity group.
+                  domainId:
+                    description: The ID of the domain.
                     type: string
                   id:
-                    description: The id of the affinity group.
+                    description: The ID of the domain.
                     type: string
                   name:
-                    description: |-
-                      The name of the affinity group. Changing this
-                      forces a new resource to be created.
+                    description: The name of the domain.
                     type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to register this
-                      affinity group to. Changing this forces a new resource to be created.
+                  networkDomain:
+                    description: The network domain for the domain.
                     type: string
-                  type:
-                    description: |-
-                      The affinity group type. Changing this
-                      forces a new resource to be created.
+                  parentDomainId:
+                    description: The ID of the parent domain.
                     type: string
                 type: object
               conditions:

@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: connections.network.terasky.com
+  name: offerings.network.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Connection
-    listKind: ConnectionList
-    plural: connections
-    singular: connection
+    kind: Offering
+    listKind: OfferingList
+    plural: offerings
+    singular: offering
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Connection is the Schema for the Connections API. Creates a site
-          to site VPN connection.
+        description: Offering is the Schema for the Offerings API. Creates a Network
+          Offering
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ConnectionSpec defines the desired state of Connection
+            description: OfferingSpec defines the desired state of Offering
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,15 +73,19 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  customerGatewayId:
-                    description: |-
-                      The Customer Gateway ID to connect.
-                      Changing this forces a new resource to be created.
+                  displayText:
+                    description: The display text of the network offering.
                     type: string
-                  vpnGatewayId:
-                    description: |-
-                      The VPN Gateway ID to connect. Changing
-                      this forces a new resource to be created.
+                  guestIpType:
+                    description: The type of IP address allocation for the network
+                      offering. Possible values are "Shared" or "Isolated".
+                    type: string
+                  name:
+                    description: The name of the network offering.
+                    type: string
+                  trafficType:
+                    description: The type of traffic for the network offering. Possible
+                      values are "Guest" or "Management".
                     type: string
                 type: object
               initProvider:
@@ -97,15 +101,19 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  customerGatewayId:
-                    description: |-
-                      The Customer Gateway ID to connect.
-                      Changing this forces a new resource to be created.
+                  displayText:
+                    description: The display text of the network offering.
                     type: string
-                  vpnGatewayId:
-                    description: |-
-                      The VPN Gateway ID to connect. Changing
-                      this forces a new resource to be created.
+                  guestIpType:
+                    description: The type of IP address allocation for the network
+                      offering. Possible values are "Shared" or "Isolated".
+                    type: string
+                  name:
+                    description: The name of the network offering.
+                    type: string
+                  trafficType:
+                    description: The type of traffic for the network offering. Possible
+                      values are "Guest" or "Management".
                     type: string
                 type: object
               managementPolicies:
@@ -276,31 +284,43 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.customerGatewayId is a required parameter
+            - message: spec.forProvider.displayText is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.customerGatewayId)
-                || (has(self.initProvider) && has(self.initProvider.customerGatewayId))'
-            - message: spec.forProvider.vpnGatewayId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.displayText)
+                || (has(self.initProvider) && has(self.initProvider.displayText))'
+            - message: spec.forProvider.guestIpType is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpnGatewayId)
-                || (has(self.initProvider) && has(self.initProvider.vpnGatewayId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.guestIpType)
+                || (has(self.initProvider) && has(self.initProvider.guestIpType))'
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.trafficType is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.trafficType)
+                || (has(self.initProvider) && has(self.initProvider.trafficType))'
           status:
-            description: ConnectionStatus defines the observed state of Connection.
+            description: OfferingStatus defines the observed state of Offering.
             properties:
               atProvider:
                 properties:
-                  customerGatewayId:
-                    description: |-
-                      The Customer Gateway ID to connect.
-                      Changing this forces a new resource to be created.
+                  displayText:
+                    description: The display text of the network offering.
+                    type: string
+                  guestIpType:
+                    description: The type of IP address allocation for the network
+                      offering. Possible values are "Shared" or "Isolated".
                     type: string
                   id:
-                    description: The ID of the VPN Connection.
+                    description: The ID of the network offering.
                     type: string
-                  vpnGatewayId:
-                    description: |-
-                      The VPN Gateway ID to connect. Changing
-                      this forces a new resource to be created.
+                  name:
+                    description: The name of the network offering.
+                    type: string
+                  trafficType:
+                    description: The type of traffic for the network offering. Possible
+                      values are "Guest" or "Management".
                     type: string
                 type: object
               conditions:

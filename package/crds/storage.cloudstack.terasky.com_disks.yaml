@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: groups.security.terasky.com
+  name: disks.storage.cloudstack.terasky.com
 spec:
-  group: security.terasky.com
+  group: storage.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Group
-    listKind: GroupList
-    plural: groups
-    singular: group
+    kind: Disk
+    listKind: DiskList
+    plural: disks
+    singular: disk
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,9 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Group is the Schema for the Groups API. Creates a security group.
+        description: Disk is the Schema for the Disks API. Creates a disk volume from
+          a disk offering. This disk volume will be attached to a virtual machine
+          if the optional parameters are configured.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +56,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: GroupSpec defines the desired state of Group
+            description: DiskSpec defines the desired state of Disk
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,20 +74,57 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  description:
+                  attach:
                     description: |-
-                      The description of the security group. Changing
-                      this forces a new resource to be created.
+                      Determines whether or not to attach the disk volume to a
+                      virtual machine (defaults false).
+                    type: boolean
+                  deviceId:
+                    description: The device ID to map the disk volume to within the
+                      guest OS.
+                    type: number
+                  diskOffering:
+                    description: |-
+                      The name or ID of the disk offering to use for
+                      this disk volume.
                     type: string
                   name:
                     description: |-
-                      The name of the security group. Changing this forces a
-                      new resource to be created.
+                      The name of the disk volume. Changing this forces a new
+                      resource to be created.
                     type: string
                   project:
                     description: |-
-                      The name or ID of the project to create this security
-                      group in. Changing this forces a new resource to be created.
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  reattachOnChange:
+                    description: |-
+                      Determines whether or not to detach the disk volume
+                      from the virtual machine on disk offering or size change.
+                    type: boolean
+                  shrinkOk:
+                    description: |-
+                      Verifies if the disk volume is allowed to shrink when
+                      resizing (defaults false).
+                    type: boolean
+                  size:
+                    description: The size of the disk volume in gigabytes.
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  virtualMachineId:
+                    description: |-
+                      The ID of the virtual machine to which you want
+                      to attach the disk volume.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this disk volume will be available.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -101,20 +140,57 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  description:
+                  attach:
                     description: |-
-                      The description of the security group. Changing
-                      this forces a new resource to be created.
+                      Determines whether or not to attach the disk volume to a
+                      virtual machine (defaults false).
+                    type: boolean
+                  deviceId:
+                    description: The device ID to map the disk volume to within the
+                      guest OS.
+                    type: number
+                  diskOffering:
+                    description: |-
+                      The name or ID of the disk offering to use for
+                      this disk volume.
                     type: string
                   name:
                     description: |-
-                      The name of the security group. Changing this forces a
-                      new resource to be created.
+                      The name of the disk volume. Changing this forces a new
+                      resource to be created.
                     type: string
                   project:
                     description: |-
-                      The name or ID of the project to create this security
-                      group in. Changing this forces a new resource to be created.
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  reattachOnChange:
+                    description: |-
+                      Determines whether or not to detach the disk volume
+                      from the virtual machine on disk offering or size change.
+                    type: boolean
+                  shrinkOk:
+                    description: |-
+                      Verifies if the disk volume is allowed to shrink when
+                      resizing (defaults false).
+                    type: boolean
+                  size:
+                    description: The size of the disk volume in gigabytes.
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  virtualMachineId:
+                    description: |-
+                      The ID of the virtual machine to which you want
+                      to attach the disk volume.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this disk volume will be available.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -289,28 +365,69 @@ spec:
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
                 || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.zone is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
+                || (has(self.initProvider) && has(self.initProvider.zone))'
           status:
-            description: GroupStatus defines the observed state of Group.
+            description: DiskStatus defines the observed state of Disk.
             properties:
               atProvider:
                 properties:
-                  description:
+                  attach:
                     description: |-
-                      The description of the security group. Changing
-                      this forces a new resource to be created.
+                      Determines whether or not to attach the disk volume to a
+                      virtual machine (defaults false).
+                    type: boolean
+                  deviceId:
+                    description: The device ID to map the disk volume to within the
+                      guest OS.
+                    type: number
+                  diskOffering:
+                    description: |-
+                      The name or ID of the disk offering to use for
+                      this disk volume.
                     type: string
                   id:
-                    description: The ID of the security group.
+                    description: The ID of the disk volume.
                     type: string
                   name:
                     description: |-
-                      The name of the security group. Changing this forces a
-                      new resource to be created.
+                      The name of the disk volume. Changing this forces a new
+                      resource to be created.
                     type: string
                   project:
                     description: |-
-                      The name or ID of the project to create this security
-                      group in. Changing this forces a new resource to be created.
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  reattachOnChange:
+                    description: |-
+                      Determines whether or not to detach the disk volume
+                      from the virtual machine on disk offering or size change.
+                    type: boolean
+                  shrinkOk:
+                    description: |-
+                      Verifies if the disk volume is allowed to shrink when
+                      resizing (defaults false).
+                    type: boolean
+                  size:
+                    description: The size of the disk volume in gigabytes.
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  virtualMachineId:
+                    description: |-
+                      The ID of the virtual machine to which you want
+                      to attach the disk volume.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this disk volume will be available.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

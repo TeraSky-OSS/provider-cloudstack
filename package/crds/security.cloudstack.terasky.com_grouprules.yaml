@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: acls.network.terasky.com
+  name: grouprules.security.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: security.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: ACL
-    listKind: ACLList
-    plural: acls
-    singular: acl
+    kind: GroupRule
+    listKind: GroupRuleList
+    plural: grouprules
+    singular: grouprule
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ACL is the Schema for the ACLs API. Creates a Network ACL for
-          the given VPC.
+        description: GroupRule is the Schema for the GroupRules API. Authorizes and
+          revokes both ingress and egress rulea for a given security group.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ACLSpec defines the desired state of ACL
+            description: GroupRuleSpec defines the desired state of GroupRule
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,25 +73,70 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  description:
+                  parallelism:
                     description: |-
-                      The description of the ACL. Changing this forces a
-                      new resource to be created.
-                    type: string
-                  name:
-                    description: |-
-                      The name of the ACL. Changing this forces a new resource
-                      to be created.
-                    type: string
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                      The name or ID of the project in which the security
+                      group is created. Changing this forces a new resource to be created.
                     type: string
-                  vpcId:
+                  rule:
                     description: |-
-                      The ID of the VPC to create this ACL for. Changing this
-                      forces a new resource to be created.
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below.
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress. (defaults ingress)
+                          type: string
+                        userSecurityGroupList:
+                          description: |-
+                            A list of security groups to apply
+                            the rules to.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                      type: object
+                    type: array
+                  securityGroupId:
+                    description: |-
+                      The security group ID for which to create
+                      the rules. Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -107,25 +152,70 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  description:
+                  parallelism:
                     description: |-
-                      The description of the ACL. Changing this forces a
-                      new resource to be created.
-                    type: string
-                  name:
-                    description: |-
-                      The name of the ACL. Changing this forces a new resource
-                      to be created.
-                    type: string
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                      The name or ID of the project in which the security
+                      group is created. Changing this forces a new resource to be created.
                     type: string
-                  vpcId:
+                  rule:
                     description: |-
-                      The ID of the VPC to create this ACL for. Changing this
-                      forces a new resource to be created.
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below.
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress. (defaults ingress)
+                          type: string
+                        userSecurityGroupList:
+                          description: |-
+                            A list of security groups to apply
+                            the rules to.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                      type: object
+                    type: array
+                  securityGroupId:
+                    description: |-
+                      The security group ID for which to create
+                      the rules. Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -296,41 +386,91 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.name is a required parameter
+            - message: spec.forProvider.rule is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.vpcId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.rule)
+                || (has(self.initProvider) && has(self.initProvider.rule))'
+            - message: spec.forProvider.securityGroupId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpcId)
-                || (has(self.initProvider) && has(self.initProvider.vpcId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.securityGroupId)
+                || (has(self.initProvider) && has(self.initProvider.securityGroupId))'
           status:
-            description: ACLStatus defines the observed state of ACL.
+            description: GroupRuleStatus defines the observed state of GroupRule.
             properties:
               atProvider:
                 properties:
-                  description:
-                    description: |-
-                      The description of the ACL. Changing this forces a
-                      new resource to be created.
-                    type: string
                   id:
-                    description: The ID of the Network ACL
+                    description: The security group ID for which the rules are created.
                     type: string
-                  name:
+                  parallelism:
                     description: |-
-                      The name of the ACL. Changing this forces a new resource
-                      to be created.
-                    type: string
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                      The name or ID of the project in which the security
+                      group is created. Changing this forces a new resource to be created.
                     type: string
-                  vpcId:
+                  rule:
                     description: |-
-                      The ID of the VPC to create this ACL for. Changing this
-                      forces a new resource to be created.
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below.
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress. (defaults ingress)
+                          type: string
+                        userSecurityGroupList:
+                          description: |-
+                            A list of security groups to apply
+                            the rules to.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        uuids:
+                          additionalProperties:
+                            type: string
+                          type: object
+                          x-kubernetes-map-type: granular
+                      type: object
+                    type: array
+                  securityGroupId:
+                    description: |-
+                      The security group ID for which to create
+                      the rules. Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

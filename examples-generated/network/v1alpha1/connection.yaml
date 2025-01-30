@@ -1,4 +1,4 @@
-apiVersion: network.terasky.com/v1alpha1
+apiVersion: network.cloudstack.terasky.com/v1alpha1
 kind: Connection
 metadata:
   annotations:

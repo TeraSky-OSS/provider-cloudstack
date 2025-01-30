@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: offerings.system.terasky.com
+  name: networks.network.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Offering
-    listKind: OfferingList
-    plural: offerings
-    singular: offering
+    kind: Network
+    listKind: NetworkList
+    plural: networks
+    singular: network
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Offering is the Schema for the Offerings API. Creates a Service
-          Offering
+        description: Network is the Schema for the Networks API. Creates a network.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: OfferingSpec defines the desired state of Offering
+            description: NetworkSpec defines the desired state of Network
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,54 +72,79 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  cpuNumber:
+                  aclId:
                     description: |-
-                      The number of CPU cores.
-                      Changing this forces a new resource to be created.
-                      Number of CPU cores
-                    type: number
-                  cpuSpeed:
+                      The ACL ID that should be attached to the network or
+                      none if you do not want to attach an ACL. You can dynamically attach and
+                      swap ACL's, but if you want to detach an attached ACL and revert to using
+                      none, this will force a new resource to be created. (defaults none)
+                    type: string
+                  cidr:
                     description: |-
-                      The speed of the CPU in Mhz.
-                      Changing this forces a new resource to be created.
-                      Speed of CPU in Mhz
-                    type: number
+                      The CIDR block for the network. Changing this forces a new
+                      resource to be created.
+                    type: string
                   displayText:
-                    description: The display text of the service offering.
+                    description: The display text of the network.
                     type: string
-                  hostTags:
+                  endip:
                     description: |-
-                      The host tags for the service offering.
-                      The host tag for this service offering
+                      End of the IP block that will be available on the
+                      network. Defaults to the last available IP in the range.
                     type: string
-                  limitCpuUse:
+                  gateway:
                     description: |-
-                      Restrict the CPU usage to committed service offering.
-                      Changing this forces a new resource to be created.
-                      Restrict the CPU usage to committed service offering
-                    type: boolean
-                  memory:
-                    description: |-
-                      Memory reserved by the VM in MB.
-                      Changing this forces a new resource to be created.
-                      The total memory of the service offering in MB
-                    type: number
+                      Gateway that will be provided to the instances in this
+                      network. Defaults to the first usable IP in the range.
+                    type: string
                   name:
-                    description: |-
-                      Name of the service offering.
-                      Changing this forces a new resource to be created.
+                    description: The name of the network.
                     type: string
-                  offerHa:
+                  networkDomain:
+                    description: DNS domain for the network.
+                    type: string
+                  networkOffering:
                     description: |-
-                      The HA for the service offering.
-                      Changing this forces a new resource to be created.
-                      The HA for the service offering
+                      The name or ID of the network offering to use
+                      for this network.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  sourceNatIp:
+                    description: |-
+                      If set to true a public IP will be associated
+                      with the network. This is mainly used when the network supports the source
+                      NAT service which claims the first associated IP address. This prevents the
+                      ability to manage the IP address as an independent entity.
                     type: boolean
-                  storageType:
+                  startip:
                     description: |-
-                      The storage type of the service offering. Values are local and shared.
-                      Changing this forces a new resource to be created.
-                      The storage type of the service offering. Values are local and shared
+                      Start of the IP block that will be available on the
+                      network. Defaults to the second available IP in the range.
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  vlan:
+                    description: |-
+                      The VLAN number (1-4095) the network will use. This might be
+                      required by the Network Offering if specifyVlan=true is set. Only the ROOT
+                      admin can set this value.
+                    type: number
+                  vpcId:
+                    description: |-
+                      The VPC ID in which to create this network. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this network will be
+                      available. Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -136,54 +160,79 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  cpuNumber:
+                  aclId:
                     description: |-
-                      The number of CPU cores.
-                      Changing this forces a new resource to be created.
-                      Number of CPU cores
-                    type: number
-                  cpuSpeed:
+                      The ACL ID that should be attached to the network or
+                      none if you do not want to attach an ACL. You can dynamically attach and
+                      swap ACL's, but if you want to detach an attached ACL and revert to using
+                      none, this will force a new resource to be created. (defaults none)
+                    type: string
+                  cidr:
                     description: |-
-                      The speed of the CPU in Mhz.
-                      Changing this forces a new resource to be created.
-                      Speed of CPU in Mhz
-                    type: number
+                      The CIDR block for the network. Changing this forces a new
+                      resource to be created.
+                    type: string
                   displayText:
-                    description: The display text of the service offering.
+                    description: The display text of the network.
                     type: string
-                  hostTags:
+                  endip:
                     description: |-
-                      The host tags for the service offering.
-                      The host tag for this service offering
+                      End of the IP block that will be available on the
+                      network. Defaults to the last available IP in the range.
                     type: string
-                  limitCpuUse:
+                  gateway:
                     description: |-
-                      Restrict the CPU usage to committed service offering.
-                      Changing this forces a new resource to be created.
-                      Restrict the CPU usage to committed service offering
-                    type: boolean
-                  memory:
-                    description: |-
-                      Memory reserved by the VM in MB.
-                      Changing this forces a new resource to be created.
-                      The total memory of the service offering in MB
-                    type: number
+                      Gateway that will be provided to the instances in this
+                      network. Defaults to the first usable IP in the range.
+                    type: string
                   name:
-                    description: |-
-                      Name of the service offering.
-                      Changing this forces a new resource to be created.
+                    description: The name of the network.
                     type: string
-                  offerHa:
+                  networkDomain:
+                    description: DNS domain for the network.
+                    type: string
+                  networkOffering:
                     description: |-
-                      The HA for the service offering.
-                      Changing this forces a new resource to be created.
-                      The HA for the service offering
+                      The name or ID of the network offering to use
+                      for this network.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  sourceNatIp:
+                    description: |-
+                      If set to true a public IP will be associated
+                      with the network. This is mainly used when the network supports the source
+                      NAT service which claims the first associated IP address. This prevents the
+                      ability to manage the IP address as an independent entity.
                     type: boolean
-                  storageType:
+                  startip:
                     description: |-
-                      The storage type of the service offering. Values are local and shared.
-                      Changing this forces a new resource to be created.
-                      The storage type of the service offering. Values are local and shared
+                      Start of the IP block that will be available on the
+                      network. Defaults to the second available IP in the range.
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  vlan:
+                    description: |-
+                      The VLAN number (1-4095) the network will use. This might be
+                      required by the Network Offering if specifyVlan=true is set. Only the ROOT
+                      admin can set this value.
+                    type: number
+                  vpcId:
+                    description: |-
+                      The VPC ID in which to create this network. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this network will be
+                      available. Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -354,70 +403,109 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.displayText is a required parameter
+            - message: spec.forProvider.cidr is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.displayText)
-                || (has(self.initProvider) && has(self.initProvider.displayText))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.cidr)
+                || (has(self.initProvider) && has(self.initProvider.cidr))'
             - message: spec.forProvider.name is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
                 || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.networkOffering is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.networkOffering)
+                || (has(self.initProvider) && has(self.initProvider.networkOffering))'
+            - message: spec.forProvider.zone is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
+                || (has(self.initProvider) && has(self.initProvider.zone))'
           status:
-            description: OfferingStatus defines the observed state of Offering.
+            description: NetworkStatus defines the observed state of Network.
             properties:
               atProvider:
                 properties:
-                  cpuNumber:
+                  aclId:
                     description: |-
-                      The number of CPU cores.
-                      Changing this forces a new resource to be created.
-                      Number of CPU cores
-                    type: number
-                  cpuSpeed:
-                    description: |-
-                      The speed of the CPU in Mhz.
-                      Changing this forces a new resource to be created.
-                      Speed of CPU in Mhz
-                    type: number
-                  displayText:
-                    description: The display text of the service offering.
+                      The ACL ID that should be attached to the network or
+                      none if you do not want to attach an ACL. You can dynamically attach and
+                      swap ACL's, but if you want to detach an attached ACL and revert to using
+                      none, this will force a new resource to be created. (defaults none)
                     type: string
-                  hostTags:
+                  cidr:
                     description: |-
-                      The host tags for the service offering.
-                      The host tag for this service offering
+                      The CIDR block for the network. Changing this forces a new
+                      resource to be created.
+                    type: string
+                  displayText:
+                    description: The display text of the network.
+                    type: string
+                  endip:
+                    description: |-
+                      End of the IP block that will be available on the
+                      network. Defaults to the last available IP in the range.
+                    type: string
+                  gateway:
+                    description: |-
+                      Gateway that will be provided to the instances in this
+                      network. Defaults to the first usable IP in the range.
                     type: string
                   id:
-                    description: The ID of the service offering.
+                    description: The ID of the network.
                     type: string
-                  limitCpuUse:
-                    description: |-
-                      Restrict the CPU usage to committed service offering.
-                      Changing this forces a new resource to be created.
-                      Restrict the CPU usage to committed service offering
-                    type: boolean
-                  memory:
-                    description: |-
-                      Memory reserved by the VM in MB.
-                      Changing this forces a new resource to be created.
-                      The total memory of the service offering in MB
-                    type: number
                   name:
-                    description: |-
-                      Name of the service offering.
-                      Changing this forces a new resource to be created.
+                    description: The name of the network.
                     type: string
-                  offerHa:
+                  networkDomain:
+                    description: DNS domain for the network.
+                    type: string
+                  networkOffering:
                     description: |-
-                      The HA for the service offering.
-                      Changing this forces a new resource to be created.
-                      The HA for the service offering
+                      The name or ID of the network offering to use
+                      for this network.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  sourceNatIp:
+                    description: |-
+                      If set to true a public IP will be associated
+                      with the network. This is mainly used when the network supports the source
+                      NAT service which claims the first associated IP address. This prevents the
+                      ability to manage the IP address as an independent entity.
                     type: boolean
-                  storageType:
+                  sourceNatIpAddress:
+                    description: The associated source NAT IP.
+                    type: string
+                  sourceNatIpId:
+                    description: The ID of the associated source NAT IP.
+                    type: string
+                  startip:
                     description: |-
-                      The storage type of the service offering. Values are local and shared.
-                      Changing this forces a new resource to be created.
-                      The storage type of the service offering. Values are local and shared
+                      Start of the IP block that will be available on the
+                      network. Defaults to the second available IP in the range.
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                    x-kubernetes-map-type: granular
+                  vlan:
+                    description: |-
+                      The VLAN number (1-4095) the network will use. This might be
+                      required by the Network Offering if specifyVlan=true is set. Only the ROOT
+                      admin can set this value.
+                    type: number
+                  vpcId:
+                    description: |-
+                      The VPC ID in which to create this network. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where this network will be
+                      available. Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

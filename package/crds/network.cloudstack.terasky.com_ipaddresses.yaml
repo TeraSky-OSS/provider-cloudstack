@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: keypairs.security.terasky.com
+  name: ipaddresses.network.cloudstack.terasky.com
 spec:
-  group: security.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Keypair
-    listKind: KeypairList
-    plural: keypairs
-    singular: keypair
+    kind: Ipaddress
+    listKind: IpaddressList
+    plural: ipaddresses
+    singular: ipaddress
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Keypair is the Schema for the Keypairs API. Creates or registers
-          an SSH key pair.
+        description: Ipaddress is the Schema for the Ipaddresss API. Assigns a secondary
+          IP to a NIC.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: KeypairSpec defines the desired state of Keypair
+            description: IpaddressSpec defines the desired state of Ipaddress
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,24 +73,22 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  name:
-                    description: |-
-                      The name of the SSH key pair. This is a unique value
-                      within a CloudStack account. Changing this forces a new resource to be
-                      created.
+                  ipAddress:
+                    description: "The IP address to bind the to NIC. If not supplied\nan
+                      IP address will be selected randomly. Changing this forces a
+                      new resource\nto be\tcreated."
                     type: string
-                  project:
+                  nicId:
                     description: |-
-                      The name or ID of the project to register this
-                      key to. Changing this forces a new resource to be created.
+                      The NIC ID to which you want to attach the secondary IP
+                      address. Changing this forces a new resource to be created (defaults to the
+                      ID of the primary NIC)
                     type: string
-                  publicKey:
+                  virtualMachineId:
                     description: |-
-                      The public key to register with CloudStack. If
-                      this is omitted, CloudStack will generate a new key pair. The key can
-                      be loaded from a file on disk using the
-                      file() function.
-                      Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which you
+                      want to attach the secondary IP address. Changing this forces a new resource
+                      to be created.
                     type: string
                 type: object
               initProvider:
@@ -106,24 +104,22 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  name:
-                    description: |-
-                      The name of the SSH key pair. This is a unique value
-                      within a CloudStack account. Changing this forces a new resource to be
-                      created.
+                  ipAddress:
+                    description: "The IP address to bind the to NIC. If not supplied\nan
+                      IP address will be selected randomly. Changing this forces a
+                      new resource\nto be\tcreated."
                     type: string
-                  project:
+                  nicId:
                     description: |-
-                      The name or ID of the project to register this
-                      key to. Changing this forces a new resource to be created.
+                      The NIC ID to which you want to attach the secondary IP
+                      address. Changing this forces a new resource to be created (defaults to the
+                      ID of the primary NIC)
                     type: string
-                  publicKey:
+                  virtualMachineId:
                     description: |-
-                      The public key to register with CloudStack. If
-                      this is omitted, CloudStack will generate a new key pair. The key can
-                      be loaded from a file on disk using the
-                      file() function.
-                      Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which you
+                      want to attach the secondary IP address. Changing this forces a new resource
+                      to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -294,44 +290,34 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.name is a required parameter
+            - message: spec.forProvider.virtualMachineId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.virtualMachineId)
+                || (has(self.initProvider) && has(self.initProvider.virtualMachineId))'
           status:
-            description: KeypairStatus defines the observed state of Keypair.
+            description: IpaddressStatus defines the observed state of Ipaddress.
             properties:
               atProvider:
                 properties:
-                  fingerprint:
-                    description: The fingerprint of the public key specified or created.
-                    type: string
                   id:
-                    description: The key pair ID.
+                    description: The secondary IP address ID.
                     type: string
-                  name:
-                    description: |-
-                      The name of the SSH key pair. This is a unique value
-                      within a CloudStack account. Changing this forces a new resource to be
-                      created.
+                  ipAddress:
+                    description: "The IP address to bind the to NIC. If not supplied\nan
+                      IP address will be selected randomly. Changing this forces a
+                      new resource\nto be\tcreated."
                     type: string
-                  privateKey:
+                  nicId:
                     description: |-
-                      The private key generated by CloudStack. Only available
-                      if CloudStack generated the key pair.
+                      The NIC ID to which you want to attach the secondary IP
+                      address. Changing this forces a new resource to be created (defaults to the
+                      ID of the primary NIC)
                     type: string
-                  project:
+                  virtualMachineId:
                     description: |-
-                      The name or ID of the project to register this
-                      key to. Changing this forces a new resource to be created.
-                    type: string
-                  publicKey:
-                    description: |-
-                      The public key to register with CloudStack. If
-                      this is omitted, CloudStack will generate a new key pair. The key can
-                      be loaded from a file on disk using the
-                      file() function.
-                      Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which you
+                      want to attach the secondary IP address. Changing this forces a new resource
+                      to be created.
                     type: string
                 type: object
               conditions:

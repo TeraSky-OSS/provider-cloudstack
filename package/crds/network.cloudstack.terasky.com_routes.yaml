@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: nats.network.terasky.com
+  name: routes.network.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: NAT
-    listKind: NATList
-    plural: nats
-    singular: nat
+    kind: Route
+    listKind: RouteList
+    plural: routes
+    singular: route
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: NAT is the Schema for the NATs API. Enables static NAT for a
-          given IP address.
+        description: Route is the Schema for the Routes API. Creates a static route.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +54,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: NATSpec defines the desired state of NAT
+            description: RouteSpec defines the desired state of Route
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,26 +72,15 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  ipAddressId:
+                  cidr:
                     description: |-
-                      The public IP address ID for which static
-                      NAT will be enabled. Changing this forces a new resource to be created.
+                      The CIDR for the static route. Changing this forces
+                      a new resource to be created.
                     type: string
-                  project:
+                  gatewayId:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  virtualMachineId:
-                    description: |-
-                      The virtual machine ID to enable the
-                      static NAT feature for. Changing this forces a new resource to be created.
-                    type: string
-                  vmGuestIp:
-                    description: |-
-                      The virtual machine IP address to forward the
-                      static NAT traffic to (useful when the virtual machine has secondary
-                      NICs or IP addresses). Changing this forces a new resource to be created.
+                      The ID of the Private gateway. Changing this forces
+                      a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -108,26 +96,15 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  ipAddressId:
+                  cidr:
                     description: |-
-                      The public IP address ID for which static
-                      NAT will be enabled. Changing this forces a new resource to be created.
+                      The CIDR for the static route. Changing this forces
+                      a new resource to be created.
                     type: string
-                  project:
+                  gatewayId:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  virtualMachineId:
-                    description: |-
-                      The virtual machine ID to enable the
-                      static NAT feature for. Changing this forces a new resource to be created.
-                    type: string
-                  vmGuestIp:
-                    description: |-
-                      The virtual machine IP address to forward the
-                      static NAT traffic to (useful when the virtual machine has secondary
-                      NICs or IP addresses). Changing this forces a new resource to be created.
+                      The ID of the Private gateway. Changing this forces
+                      a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -298,42 +275,31 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.ipAddressId is a required parameter
+            - message: spec.forProvider.cidr is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipAddressId)
-                || (has(self.initProvider) && has(self.initProvider.ipAddressId))'
-            - message: spec.forProvider.virtualMachineId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.cidr)
+                || (has(self.initProvider) && has(self.initProvider.cidr))'
+            - message: spec.forProvider.gatewayId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.virtualMachineId)
-                || (has(self.initProvider) && has(self.initProvider.virtualMachineId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.gatewayId)
+                || (has(self.initProvider) && has(self.initProvider.gatewayId))'
           status:
-            description: NATStatus defines the observed state of NAT.
+            description: RouteStatus defines the observed state of Route.
             properties:
               atProvider:
                 properties:
+                  cidr:
+                    description: |-
+                      The CIDR for the static route. Changing this forces
+                      a new resource to be created.
+                    type: string
+                  gatewayId:
+                    description: |-
+                      The ID of the Private gateway. Changing this forces
+                      a new resource to be created.
+                    type: string
                   id:
-                    description: The static nat ID.
-                    type: string
-                  ipAddressId:
-                    description: |-
-                      The public IP address ID for which static
-                      NAT will be enabled. Changing this forces a new resource to be created.
-                    type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  virtualMachineId:
-                    description: |-
-                      The virtual machine ID to enable the
-                      static NAT feature for. Changing this forces a new resource to be created.
-                    type: string
-                  vmGuestIp:
-                    description: |-
-                      The virtual machine IP address to forward the
-                      static NAT traffic to (useful when the virtual machine has secondary
-                      NICs or IP addresses). Changing this forces a new resource to be created.
+                    description: The ID of the static route.
                     type: string
                 type: object
               conditions:

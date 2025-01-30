@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: users.system.terasky.com
+  name: aclrules.network.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: User
-    listKind: UserList
-    plural: users
-    singular: user
+    kind: ACLRule
+    listKind: ACLRuleList
+    plural: aclrules
+    singular: aclrule
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: User is the Schema for the Users API. Creates a User
+        description: ACLRule is the Schema for the ACLRules API. Creates network ACL
+          rules for a given network ACL.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: UserSpec defines the desired state of User
+            description: ACLRuleSpec defines the desired state of ACLRule
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,24 +73,74 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  account:
-                    description: The account the user belongs to.
+                  aclId:
+                    description: |-
+                      The network ACL ID for which to create the rules.
+                      Changing this forces a new resource to be created.
                     type: string
-                  email:
-                    description: The email address of the user.
+                  managed:
+                    description: |-
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this network ACL will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
+                    type: boolean
+                  parallelism:
+                    description: |-
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  firstName:
-                    description: The first name of the user.
-                    type: string
-                  lastName:
-                    description: The last name of the user.
-                    type: string
-                  password:
-                    description: The password for the user.
-                    type: string
-                  username:
-                    description: The username of the user.
-                    type: string
+                  rule:
+                    description: |-
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        action:
+                          description: |-
+                            The action for the rule. Valid options are: allow and
+                            deny (defaults allow).
+                          type: string
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress (defaults ingress).
+                          type: string
+                      type: object
+                    type: array
                 type: object
               initProvider:
                 description: |-
@@ -104,24 +155,74 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  account:
-                    description: The account the user belongs to.
+                  aclId:
+                    description: |-
+                      The network ACL ID for which to create the rules.
+                      Changing this forces a new resource to be created.
                     type: string
-                  email:
-                    description: The email address of the user.
+                  managed:
+                    description: |-
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this network ACL will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
+                    type: boolean
+                  parallelism:
+                    description: |-
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  firstName:
-                    description: The first name of the user.
-                    type: string
-                  lastName:
-                    description: The last name of the user.
-                    type: string
-                  password:
-                    description: The password for the user.
-                    type: string
-                  username:
-                    description: The username of the user.
-                    type: string
+                  rule:
+                    description: |-
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        action:
+                          description: |-
+                            The action for the rule. Valid options are: allow and
+                            deny (defaults allow).
+                          type: string
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress (defaults ingress).
+                          type: string
+                      type: object
+                    type: array
                 type: object
               managementPolicies:
                 default:
@@ -291,51 +392,91 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.email is a required parameter
+            - message: spec.forProvider.aclId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.email)
-                || (has(self.initProvider) && has(self.initProvider.email))'
-            - message: spec.forProvider.firstName is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.firstName)
-                || (has(self.initProvider) && has(self.initProvider.firstName))'
-            - message: spec.forProvider.lastName is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.lastName)
-                || (has(self.initProvider) && has(self.initProvider.lastName))'
-            - message: spec.forProvider.password is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.password)
-                || (has(self.initProvider) && has(self.initProvider.password))'
-            - message: spec.forProvider.username is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.username)
-                || (has(self.initProvider) && has(self.initProvider.username))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.aclId)
+                || (has(self.initProvider) && has(self.initProvider.aclId))'
           status:
-            description: UserStatus defines the observed state of User.
+            description: ACLRuleStatus defines the observed state of ACLRule.
             properties:
               atProvider:
                 properties:
-                  account:
-                    description: The account the user belongs to.
-                    type: string
-                  email:
-                    description: The email address of the user.
-                    type: string
-                  firstName:
-                    description: The first name of the user.
+                  aclId:
+                    description: |-
+                      The network ACL ID for which to create the rules.
+                      Changing this forces a new resource to be created.
                     type: string
                   id:
+                    description: The ACL ID for which the rules are created.
                     type: string
-                  lastName:
-                    description: The last name of the user.
+                  managed:
+                    description: |-
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this network ACL will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
+                    type: boolean
+                  parallelism:
+                    description: |-
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
+                    type: number
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
                     type: string
-                  password:
-                    description: The password for the user.
-                    type: string
-                  username:
-                    description: The username of the user.
-                    type: string
+                  rule:
+                    description: |-
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        action:
+                          description: |-
+                            The action for the rule. Valid options are: allow and
+                            deny (defaults allow).
+                          type: string
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow, or -1 to allow any. This
+                            can only be specified if the protocol is ICMP. (defaults 0)
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp, icmp, all or a valid protocol number.
+                          type: string
+                        trafficType:
+                          description: |-
+                            The traffic type for the rule. Valid options are:
+                            ingress or egress (defaults ingress).
+                          type: string
+                        uuids:
+                          additionalProperties:
+                            type: string
+                          type: object
+                          x-kubernetes-map-type: granular
+                      type: object
+                    type: array
                 type: object
               conditions:
                 description: Conditions of the resource.

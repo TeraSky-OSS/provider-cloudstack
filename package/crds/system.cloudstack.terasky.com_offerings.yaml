@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: offerings.storage.terasky.com
+  name: offerings.system.cloudstack.terasky.com
 spec:
-  group: storage.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
@@ -34,7 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Offering is the Schema for the Offerings API. Creates a Disk
+        description: Offering is the Schema for the Offerings API. Creates a Service
           Offering
         properties:
           apiVersion:
@@ -73,14 +73,54 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  diskSize:
-                    description: The size of the disk offering in GB.
+                  cpuNumber:
+                    description: |-
+                      The number of CPU cores.
+                      Changing this forces a new resource to be created.
+                      Number of CPU cores
+                    type: number
+                  cpuSpeed:
+                    description: |-
+                      The speed of the CPU in Mhz.
+                      Changing this forces a new resource to be created.
+                      Speed of CPU in Mhz
                     type: number
                   displayText:
-                    description: The display text of the disk offering.
+                    description: The display text of the service offering.
                     type: string
+                  hostTags:
+                    description: |-
+                      The host tags for the service offering.
+                      The host tag for this service offering
+                    type: string
+                  limitCpuUse:
+                    description: |-
+                      Restrict the CPU usage to committed service offering.
+                      Changing this forces a new resource to be created.
+                      Restrict the CPU usage to committed service offering
+                    type: boolean
+                  memory:
+                    description: |-
+                      Memory reserved by the VM in MB.
+                      Changing this forces a new resource to be created.
+                      The total memory of the service offering in MB
+                    type: number
                   name:
-                    description: The name of the disk offering.
+                    description: |-
+                      Name of the service offering.
+                      Changing this forces a new resource to be created.
+                    type: string
+                  offerHa:
+                    description: |-
+                      The HA for the service offering.
+                      Changing this forces a new resource to be created.
+                      The HA for the service offering
+                    type: boolean
+                  storageType:
+                    description: |-
+                      The storage type of the service offering. Values are local and shared.
+                      Changing this forces a new resource to be created.
+                      The storage type of the service offering. Values are local and shared
                     type: string
                 type: object
               initProvider:
@@ -96,14 +136,54 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  diskSize:
-                    description: The size of the disk offering in GB.
+                  cpuNumber:
+                    description: |-
+                      The number of CPU cores.
+                      Changing this forces a new resource to be created.
+                      Number of CPU cores
+                    type: number
+                  cpuSpeed:
+                    description: |-
+                      The speed of the CPU in Mhz.
+                      Changing this forces a new resource to be created.
+                      Speed of CPU in Mhz
                     type: number
                   displayText:
-                    description: The display text of the disk offering.
+                    description: The display text of the service offering.
                     type: string
+                  hostTags:
+                    description: |-
+                      The host tags for the service offering.
+                      The host tag for this service offering
+                    type: string
+                  limitCpuUse:
+                    description: |-
+                      Restrict the CPU usage to committed service offering.
+                      Changing this forces a new resource to be created.
+                      Restrict the CPU usage to committed service offering
+                    type: boolean
+                  memory:
+                    description: |-
+                      Memory reserved by the VM in MB.
+                      Changing this forces a new resource to be created.
+                      The total memory of the service offering in MB
+                    type: number
                   name:
-                    description: The name of the disk offering.
+                    description: |-
+                      Name of the service offering.
+                      Changing this forces a new resource to be created.
+                    type: string
+                  offerHa:
+                    description: |-
+                      The HA for the service offering.
+                      Changing this forces a new resource to be created.
+                      The HA for the service offering
+                    type: boolean
+                  storageType:
+                    description: |-
+                      The storage type of the service offering. Values are local and shared.
+                      Changing this forces a new resource to be created.
+                      The storage type of the service offering. Values are local and shared
                     type: string
                 type: object
               managementPolicies:
@@ -274,10 +354,6 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.diskSize is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.diskSize)
-                || (has(self.initProvider) && has(self.initProvider.diskSize))'
             - message: spec.forProvider.displayText is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.displayText)
@@ -291,17 +367,57 @@ spec:
             properties:
               atProvider:
                 properties:
-                  diskSize:
-                    description: The size of the disk offering in GB.
+                  cpuNumber:
+                    description: |-
+                      The number of CPU cores.
+                      Changing this forces a new resource to be created.
+                      Number of CPU cores
+                    type: number
+                  cpuSpeed:
+                    description: |-
+                      The speed of the CPU in Mhz.
+                      Changing this forces a new resource to be created.
+                      Speed of CPU in Mhz
                     type: number
                   displayText:
-                    description: The display text of the disk offering.
+                    description: The display text of the service offering.
+                    type: string
+                  hostTags:
+                    description: |-
+                      The host tags for the service offering.
+                      The host tag for this service offering
                     type: string
                   id:
-                    description: The ID of the disk offering.
+                    description: The ID of the service offering.
                     type: string
+                  limitCpuUse:
+                    description: |-
+                      Restrict the CPU usage to committed service offering.
+                      Changing this forces a new resource to be created.
+                      Restrict the CPU usage to committed service offering
+                    type: boolean
+                  memory:
+                    description: |-
+                      Memory reserved by the VM in MB.
+                      Changing this forces a new resource to be created.
+                      The total memory of the service offering in MB
+                    type: number
                   name:
-                    description: The name of the disk offering.
+                    description: |-
+                      Name of the service offering.
+                      Changing this forces a new resource to be created.
+                    type: string
+                  offerHa:
+                    description: |-
+                      The HA for the service offering.
+                      Changing this forces a new resource to be created.
+                      The HA for the service offering
+                    type: boolean
+                  storageType:
+                    description: |-
+                      The storage type of the service offering. Values are local and shared.
+                      Changing this forces a new resource to be created.
+                      The storage type of the service offering. Values are local and shared
                     type: string
                 type: object
               conditions:

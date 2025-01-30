@@ -13,6 +13,6 @@ func Configure(p *config.Provider) {
     p.AddResourceConfigurator("cloudstack_zone", func(r *config.Resource) {
         // We need to override the default group that upjet generated for
         // this resource, which would be "github"
-        r.ShortGroup = "system"
+        r.ShortGroup = "system.cloudstack"
     })
 }

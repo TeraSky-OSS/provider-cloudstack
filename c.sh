@@ -7,9 +7,6 @@ for resource in account affinity_group autoscale_vm_profile disk disk_offering d
     
     # Create config.go file
     cat > "config/$resource/config.go" << EOF
-/*
-Copyright 2022 Upbound Inc.
-*/
 
 package $resource
 

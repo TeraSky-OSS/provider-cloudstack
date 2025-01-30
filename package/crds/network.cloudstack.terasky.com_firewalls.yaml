@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: disks.storage.terasky.com
+  name: firewalls.network.cloudstack.terasky.com
 spec:
-  group: storage.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Disk
-    listKind: DiskList
-    plural: disks
-    singular: disk
+    kind: Firewall
+    listKind: FirewallList
+    plural: firewalls
+    singular: firewall
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,9 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Disk is the Schema for the Disks API. Creates a disk volume from
-          a disk offering. This disk volume will be attached to a virtual machine
-          if the optional parameters are configured.
+        description: Firewall is the Schema for the Firewalls API. Creates firewall
+          rules for a given IP address.
         properties:
           apiVersion:
             description: |-
@@ -56,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: DiskSpec defines the desired state of Disk
+            description: FirewallSpec defines the desired state of Firewall
             properties:
               deletionPolicy:
                 default: Delete
@@ -74,58 +73,59 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  attach:
+                  ipAddressId:
                     description: |-
-                      Determines whether or not to attach the disk volume to a
-                      virtual machine (defaults false).
+                      The IP address ID for which to create the
+                      firewall rules. Changing this forces a new resource to be created.
+                    type: string
+                  managed:
+                    description: |-
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this IP address will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
                     type: boolean
-                  deviceId:
-                    description: The device ID to map the disk volume to within the
-                      guest OS.
+                  parallelism:
+                    description: |-
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
                     type: number
-                  diskOffering:
+                  rule:
                     description: |-
-                      The name or ID of the disk offering to use for
-                      this disk volume.
-                    type: string
-                  name:
-                    description: |-
-                      The name of the disk volume. Changing this forces a new
-                      resource to be created.
-                    type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  reattachOnChange:
-                    description: |-
-                      Determines whether or not to detach the disk volume
-                      from the virtual machine on disk offering or size change.
-                    type: boolean
-                  shrinkOk:
-                    description: |-
-                      Verifies if the disk volume is allowed to shrink when
-                      resizing (defaults false).
-                    type: boolean
-                  size:
-                    description: The size of the disk volume in gigabytes.
-                    type: number
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  virtualMachineId:
-                    description: |-
-                      The ID of the virtual machine to which you want
-                      to attach the disk volume.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where this disk volume will be available.
-                      Changing this forces a new resource to be created.
-                    type: string
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP or UDP.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp and icmp.
+                          type: string
+                      type: object
+                    type: array
                 type: object
               initProvider:
                 description: |-
@@ -140,58 +140,59 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  attach:
+                  ipAddressId:
                     description: |-
-                      Determines whether or not to attach the disk volume to a
-                      virtual machine (defaults false).
+                      The IP address ID for which to create the
+                      firewall rules. Changing this forces a new resource to be created.
+                    type: string
+                  managed:
+                    description: |-
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this IP address will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
                     type: boolean
-                  deviceId:
-                    description: The device ID to map the disk volume to within the
-                      guest OS.
+                  parallelism:
+                    description: |-
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
                     type: number
-                  diskOffering:
+                  rule:
                     description: |-
-                      The name or ID of the disk offering to use for
-                      this disk volume.
-                    type: string
-                  name:
-                    description: |-
-                      The name of the disk volume. Changing this forces a new
-                      resource to be created.
-                    type: string
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  reattachOnChange:
-                    description: |-
-                      Determines whether or not to detach the disk volume
-                      from the virtual machine on disk offering or size change.
-                    type: boolean
-                  shrinkOk:
-                    description: |-
-                      Verifies if the disk volume is allowed to shrink when
-                      resizing (defaults false).
-                    type: boolean
-                  size:
-                    description: The size of the disk volume in gigabytes.
-                    type: number
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  virtualMachineId:
-                    description: |-
-                      The ID of the virtual machine to which you want
-                      to attach the disk volume.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where this disk volume will be available.
-                      Changing this forces a new resource to be created.
-                    type: string
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP or UDP.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp and icmp.
+                          type: string
+                      type: object
+                    type: array
                 type: object
               managementPolicies:
                 default:
@@ -361,74 +362,77 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.name is a required parameter
+            - message: spec.forProvider.ipAddressId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.zone is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
-                || (has(self.initProvider) && has(self.initProvider.zone))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipAddressId)
+                || (has(self.initProvider) && has(self.initProvider.ipAddressId))'
           status:
-            description: DiskStatus defines the observed state of Disk.
+            description: FirewallStatus defines the observed state of Firewall.
             properties:
               atProvider:
                 properties:
-                  attach:
-                    description: |-
-                      Determines whether or not to attach the disk volume to a
-                      virtual machine (defaults false).
-                    type: boolean
-                  deviceId:
-                    description: The device ID to map the disk volume to within the
-                      guest OS.
-                    type: number
-                  diskOffering:
-                    description: |-
-                      The name or ID of the disk offering to use for
-                      this disk volume.
-                    type: string
                   id:
-                    description: The ID of the disk volume.
+                    description: The IP address ID for which the firewall rules are
+                      created.
                     type: string
-                  name:
+                  ipAddressId:
                     description: |-
-                      The name of the disk volume. Changing this forces a new
-                      resource to be created.
+                      The IP address ID for which to create the
+                      firewall rules. Changing this forces a new resource to be created.
                     type: string
-                  project:
+                  managed:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  reattachOnChange:
-                    description: |-
-                      Determines whether or not to detach the disk volume
-                      from the virtual machine on disk offering or size change.
+                      USE WITH CAUTION! If enabled all the firewall rules for
+                      this IP address will be managed by this resource. This means it will delete
+                      all firewall rules that are not in your config! (defaults false)
                     type: boolean
-                  shrinkOk:
+                  parallelism:
                     description: |-
-                      Verifies if the disk volume is allowed to shrink when
-                      resizing (defaults false).
-                    type: boolean
-                  size:
-                    description: The size of the disk volume in gigabytes.
+                      Specifies how much rules will be created or deleted
+                      concurrently. (defaults 2)
                     type: number
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  virtualMachineId:
+                  rule:
                     description: |-
-                      The ID of the virtual machine to which you want
-                      to attach the disk volume.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where this disk volume will be available.
-                      Changing this forces a new resource to be created.
-                    type: string
+                      Can be specified multiple times. Each rule block supports
+                      fields documented below. If managed = false at least one rule is required!
+                    items:
+                      properties:
+                        cidrList:
+                          description: A CIDR list to allow access to the given ports.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        icmpCode:
+                          description: |-
+                            The ICMP code to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        icmpType:
+                          description: |-
+                            The ICMP type to allow. This can only be specified if
+                            the protocol is ICMP.
+                          type: number
+                        ports:
+                          description: |-
+                            List of ports and/or port ranges to allow. This can only
+                            be specified if the protocol is TCP or UDP.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        protocol:
+                          description: |-
+                            The name of the protocol to allow. Valid options are:
+                            tcp, udp and icmp.
+                          type: string
+                        uuids:
+                          additionalProperties:
+                            type: string
+                          type: object
+                          x-kubernetes-map-type: granular
+                      type: object
+                    type: array
                 type: object
               conditions:
                 description: Conditions of the resource.

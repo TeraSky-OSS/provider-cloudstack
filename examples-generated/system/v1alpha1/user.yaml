@@ -1,4 +1,4 @@
-apiVersion: system.terasky.com/v1alpha1
+apiVersion: system.cloudstack.terasky.com/v1alpha1
 kind: User
 metadata:
   annotations:

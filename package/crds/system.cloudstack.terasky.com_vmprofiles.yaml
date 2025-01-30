@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: customergateways.network.terasky.com
+  name: vmprofiles.system.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: system.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: CustomerGateway
-    listKind: CustomerGatewayList
-    plural: customergateways
-    singular: customergateway
+    kind: VMProfile
+    listKind: VMProfileList
+    plural: vmprofiles
+    singular: vmprofile
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: CustomerGateway is the Schema for the CustomerGateways API. Creates
-          a site to site VPN local customer gateway.
+        description: VMProfile is the Schema for the VMProfiles API. Creates an autoscale
+          VM profile.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: CustomerGatewaySpec defines the desired state of CustomerGateway
+            description: VMProfileSpec defines the desired state of VMProfile
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,43 +73,39 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  cidr:
-                    description: The CIDR block that needs to be routed through this
-                      gateway.
-                    type: string
-                  dpd:
-                    description: If DPD is enabled for the related VPN connection
-                      (defaults false)
-                    type: boolean
-                  espLifetime:
+                  destroyVmGracePeriod:
                     description: |-
-                      The ESP lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  espPolicy:
-                    description: The ESP policy to use for this VPN Customer Gateway.
+                      A time interval to wait for graceful
+                      shutdown of instances.
                     type: string
-                  gateway:
-                    description: The public IP address of the related VPN Gateway.
-                    type: string
-                  ikeLifetime:
+                  metadata:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The IKE lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  ikePolicy:
-                    description: The IKE policy to use for this VPN Customer Gateway.
-                    type: string
-                  ipsecPsk:
-                    description: The IPSEC pre-shared key used for this gateway.
-                    type: string
-                  name:
-                    description: The name of the VPN Customer Gateway.
-                    type: string
-                  project:
+                      A mapping of metadata key/values to assign to the
+                      resource.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  otherDeployParams:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The name or ID of the project to create this VPN Customer
-                      Gateway in. Changing this forces a new resource to be created.
+                      A mapping of additional params used when
+                      creating new instances.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  serviceOffering:
+                    description: |-
+                      The name or ID of the service offering used
+                      for instances. Changing this forces a new resource to be created.
+                    type: string
+                  template:
+                    description: The name or ID of the template used for instances.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where instances will be
+                      created. Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -125,43 +121,39 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  cidr:
-                    description: The CIDR block that needs to be routed through this
-                      gateway.
-                    type: string
-                  dpd:
-                    description: If DPD is enabled for the related VPN connection
-                      (defaults false)
-                    type: boolean
-                  espLifetime:
+                  destroyVmGracePeriod:
                     description: |-
-                      The ESP lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  espPolicy:
-                    description: The ESP policy to use for this VPN Customer Gateway.
+                      A time interval to wait for graceful
+                      shutdown of instances.
                     type: string
-                  gateway:
-                    description: The public IP address of the related VPN Gateway.
-                    type: string
-                  ikeLifetime:
+                  metadata:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The IKE lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  ikePolicy:
-                    description: The IKE policy to use for this VPN Customer Gateway.
-                    type: string
-                  ipsecPsk:
-                    description: The IPSEC pre-shared key used for this gateway.
-                    type: string
-                  name:
-                    description: The name of the VPN Customer Gateway.
-                    type: string
-                  project:
+                      A mapping of metadata key/values to assign to the
+                      resource.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  otherDeployParams:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The name or ID of the project to create this VPN Customer
-                      Gateway in. Changing this forces a new resource to be created.
+                      A mapping of additional params used when
+                      creating new instances.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  serviceOffering:
+                    description: |-
+                      The name or ID of the service offering used
+                      for instances. Changing this forces a new resource to be created.
+                    type: string
+                  template:
+                    description: The name or ID of the template used for instances.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where instances will be
+                      created. Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -332,75 +324,59 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.cidr is a required parameter
+            - message: spec.forProvider.serviceOffering is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.cidr)
-                || (has(self.initProvider) && has(self.initProvider.cidr))'
-            - message: spec.forProvider.espPolicy is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.serviceOffering)
+                || (has(self.initProvider) && has(self.initProvider.serviceOffering))'
+            - message: spec.forProvider.template is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.espPolicy)
-                || (has(self.initProvider) && has(self.initProvider.espPolicy))'
-            - message: spec.forProvider.gateway is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.template)
+                || (has(self.initProvider) && has(self.initProvider.template))'
+            - message: spec.forProvider.zone is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.gateway)
-                || (has(self.initProvider) && has(self.initProvider.gateway))'
-            - message: spec.forProvider.ikePolicy is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.ikePolicy)
-                || (has(self.initProvider) && has(self.initProvider.ikePolicy))'
-            - message: spec.forProvider.ipsecPsk is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipsecPsk)
-                || (has(self.initProvider) && has(self.initProvider.ipsecPsk))'
-            - message: spec.forProvider.name is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
+                || (has(self.initProvider) && has(self.initProvider.zone))'
           status:
-            description: CustomerGatewayStatus defines the observed state of CustomerGateway.
+            description: VMProfileStatus defines the observed state of VMProfile.
             properties:
               atProvider:
                 properties:
-                  cidr:
-                    description: The CIDR block that needs to be routed through this
-                      gateway.
-                    type: string
-                  dpd:
-                    description: If DPD is enabled for the related VPN connection
-                      (defaults false)
-                    type: boolean
-                  espLifetime:
+                  destroyVmGracePeriod:
                     description: |-
-                      The ESP lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  espPolicy:
-                    description: The ESP policy to use for this VPN Customer Gateway.
-                    type: string
-                  gateway:
-                    description: The public IP address of the related VPN Gateway.
+                      A time interval to wait for graceful
+                      shutdown of instances.
                     type: string
                   id:
-                    description: The ID of the VPN Customer Gateway.
+                    description: The autoscale VM profile ID.
                     type: string
-                  ikeLifetime:
+                  metadata:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The IKE lifetime of phase 2 VPN connection to this
-                      VPN Customer Gateway in seconds (defaults 86400)
-                    type: number
-                  ikePolicy:
-                    description: The IKE policy to use for this VPN Customer Gateway.
-                    type: string
-                  ipsecPsk:
-                    description: The IPSEC pre-shared key used for this gateway.
-                    type: string
-                  name:
-                    description: The name of the VPN Customer Gateway.
-                    type: string
-                  project:
+                      A mapping of metadata key/values to assign to the
+                      resource.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  otherDeployParams:
+                    additionalProperties:
+                      type: string
                     description: |-
-                      The name or ID of the project to create this VPN Customer
-                      Gateway in. Changing this forces a new resource to be created.
+                      A mapping of additional params used when
+                      creating new instances.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  serviceOffering:
+                    description: |-
+                      The name or ID of the service offering used
+                      for instances. Changing this forces a new resource to be created.
+                    type: string
+                  template:
+                    description: The name or ID of the template used for instances.
+                    type: string
+                  zone:
+                    description: |-
+                      The name or ID of the zone where instances will be
+                      created. Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

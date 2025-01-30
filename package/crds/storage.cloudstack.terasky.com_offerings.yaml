@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: aclrules.network.terasky.com
+  name: offerings.storage.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: storage.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: ACLRule
-    listKind: ACLRuleList
-    plural: aclrules
-    singular: aclrule
+    kind: Offering
+    listKind: OfferingList
+    plural: offerings
+    singular: offering
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ACLRule is the Schema for the ACLRules API. Creates network ACL
-          rules for a given network ACL.
+        description: Offering is the Schema for the Offerings API. Creates a Disk
+          Offering
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ACLRuleSpec defines the desired state of ACLRule
+            description: OfferingSpec defines the desired state of Offering
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,74 +73,15 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  aclId:
-                    description: |-
-                      The network ACL ID for which to create the rules.
-                      Changing this forces a new resource to be created.
-                    type: string
-                  managed:
-                    description: |-
-                      USE WITH CAUTION! If enabled all the firewall rules for
-                      this network ACL will be managed by this resource. This means it will delete
-                      all firewall rules that are not in your config! (defaults false)
-                    type: boolean
-                  parallelism:
-                    description: |-
-                      Specifies how much rules will be created or deleted
-                      concurrently. (defaults 2)
+                  diskSize:
+                    description: The size of the disk offering in GB.
                     type: number
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                  displayText:
+                    description: The display text of the disk offering.
                     type: string
-                  rule:
-                    description: |-
-                      Can be specified multiple times. Each rule block supports
-                      fields documented below. If managed = false at least one rule is required!
-                    items:
-                      properties:
-                        action:
-                          description: |-
-                            The action for the rule. Valid options are: allow and
-                            deny (defaults allow).
-                          type: string
-                        cidrList:
-                          description: A CIDR list to allow access to the given ports.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        icmpCode:
-                          description: |-
-                            The ICMP code to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        icmpType:
-                          description: |-
-                            The ICMP type to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        ports:
-                          description: |-
-                            List of ports and/or port ranges to allow. This can only
-                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp, udp, icmp, all or a valid protocol number.
-                          type: string
-                        trafficType:
-                          description: |-
-                            The traffic type for the rule. Valid options are:
-                            ingress or egress (defaults ingress).
-                          type: string
-                      type: object
-                    type: array
+                  name:
+                    description: The name of the disk offering.
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -155,74 +96,15 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  aclId:
-                    description: |-
-                      The network ACL ID for which to create the rules.
-                      Changing this forces a new resource to be created.
-                    type: string
-                  managed:
-                    description: |-
-                      USE WITH CAUTION! If enabled all the firewall rules for
-                      this network ACL will be managed by this resource. This means it will delete
-                      all firewall rules that are not in your config! (defaults false)
-                    type: boolean
-                  parallelism:
-                    description: |-
-                      Specifies how much rules will be created or deleted
-                      concurrently. (defaults 2)
+                  diskSize:
+                    description: The size of the disk offering in GB.
                     type: number
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                  displayText:
+                    description: The display text of the disk offering.
                     type: string
-                  rule:
-                    description: |-
-                      Can be specified multiple times. Each rule block supports
-                      fields documented below. If managed = false at least one rule is required!
-                    items:
-                      properties:
-                        action:
-                          description: |-
-                            The action for the rule. Valid options are: allow and
-                            deny (defaults allow).
-                          type: string
-                        cidrList:
-                          description: A CIDR list to allow access to the given ports.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        icmpCode:
-                          description: |-
-                            The ICMP code to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        icmpType:
-                          description: |-
-                            The ICMP type to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        ports:
-                          description: |-
-                            List of ports and/or port ranges to allow. This can only
-                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp, udp, icmp, all or a valid protocol number.
-                          type: string
-                        trafficType:
-                          description: |-
-                            The traffic type for the rule. Valid options are:
-                            ingress or egress (defaults ingress).
-                          type: string
-                      type: object
-                    type: array
+                  name:
+                    description: The name of the disk offering.
+                    type: string
                 type: object
               managementPolicies:
                 default:
@@ -392,91 +274,35 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.aclId is a required parameter
+            - message: spec.forProvider.diskSize is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.aclId)
-                || (has(self.initProvider) && has(self.initProvider.aclId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.diskSize)
+                || (has(self.initProvider) && has(self.initProvider.diskSize))'
+            - message: spec.forProvider.displayText is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.displayText)
+                || (has(self.initProvider) && has(self.initProvider.displayText))'
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
           status:
-            description: ACLRuleStatus defines the observed state of ACLRule.
+            description: OfferingStatus defines the observed state of Offering.
             properties:
               atProvider:
                 properties:
-                  aclId:
-                    description: |-
-                      The network ACL ID for which to create the rules.
-                      Changing this forces a new resource to be created.
+                  diskSize:
+                    description: The size of the disk offering in GB.
+                    type: number
+                  displayText:
+                    description: The display text of the disk offering.
                     type: string
                   id:
-                    description: The ACL ID for which the rules are created.
+                    description: The ID of the disk offering.
                     type: string
-                  managed:
-                    description: |-
-                      USE WITH CAUTION! If enabled all the firewall rules for
-                      this network ACL will be managed by this resource. This means it will delete
-                      all firewall rules that are not in your config! (defaults false)
-                    type: boolean
-                  parallelism:
-                    description: |-
-                      Specifies how much rules will be created or deleted
-                      concurrently. (defaults 2)
-                    type: number
-                  project:
-                    description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
+                  name:
+                    description: The name of the disk offering.
                     type: string
-                  rule:
-                    description: |-
-                      Can be specified multiple times. Each rule block supports
-                      fields documented below. If managed = false at least one rule is required!
-                    items:
-                      properties:
-                        action:
-                          description: |-
-                            The action for the rule. Valid options are: allow and
-                            deny (defaults allow).
-                          type: string
-                        cidrList:
-                          description: A CIDR list to allow access to the given ports.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        icmpCode:
-                          description: |-
-                            The ICMP code to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        icmpType:
-                          description: |-
-                            The ICMP type to allow, or -1 to allow any. This
-                            can only be specified if the protocol is ICMP. (defaults 0)
-                          type: number
-                        ports:
-                          description: |-
-                            List of ports and/or port ranges to allow. This can only
-                            be specified if the protocol is TCP, UDP, ALL or a valid protocol number.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: set
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp, udp, icmp, all or a valid protocol number.
-                          type: string
-                        trafficType:
-                          description: |-
-                            The traffic type for the rule. Valid options are:
-                            ingress or egress (defaults ingress).
-                          type: string
-                        uuids:
-                          additionalProperties:
-                            type: string
-                          type: object
-                          x-kubernetes-map-type: granular
-                      type: object
-                    type: array
                 type: object
               conditions:
                 description: Conditions of the resource.

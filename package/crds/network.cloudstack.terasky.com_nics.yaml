@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: forwards.network.terasky.com
+  name: nics.network.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Forward
-    listKind: ForwardList
-    plural: forwards
-    singular: forward
+    kind: Nic
+    listKind: NicList
+    plural: nics
+    singular: nic
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Forward is the Schema for the Forwards API. Creates port forwards.
+        description: Nic is the Schema for the Nics API. Creates an additional NIC
+          to add a VM to the specified network.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ForwardSpec defines the desired state of Forward
+            description: NicSpec defines the desired state of Nic
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,49 +73,20 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  forward:
+                  ipAddress:
                     description: |-
-                      Can be specified multiple times. Each forward block supports
-                      fields documented below.
-                    items:
-                      properties:
-                        privatePort:
-                          description: The private port to forward to.
-                          type: number
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp and udp.
-                          type: string
-                        publicPort:
-                          description: The public port to forward from.
-                          type: number
-                        virtualMachineId:
-                          description: The ID of the virtual machine to forward to.
-                          type: string
-                        vmGuestIp:
-                          description: |-
-                            The virtual machine IP address for the port
-                            forwarding rule (useful when the virtual machine has secondairy NICs
-                            or IP addresses).
-                          type: string
-                      type: object
-                    type: array
-                  ipAddressId:
-                    description: |-
-                      The IP address ID for which to create the port
-                      forwards. Changing this forces a new resource to be created.
+                      The IP address to assign to the NIC. Changing this
+                      forces a new resource to be created.
                     type: string
-                  managed:
+                  networkId:
                     description: |-
-                      USE WITH CAUTION! If enabled all the port forwards for
-                      this IP address will be managed by this resource. This means it will delete
-                      all port forwards that are not in your config! (defaults false)
-                    type: boolean
-                  project:
+                      The ID of the network to plug the NIC into. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
                     description: |-
-                      The name or ID of the project to create this port forward
-                      in. Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which to
+                      attach the NIC. Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -130,49 +102,20 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  forward:
+                  ipAddress:
                     description: |-
-                      Can be specified multiple times. Each forward block supports
-                      fields documented below.
-                    items:
-                      properties:
-                        privatePort:
-                          description: The private port to forward to.
-                          type: number
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp and udp.
-                          type: string
-                        publicPort:
-                          description: The public port to forward from.
-                          type: number
-                        virtualMachineId:
-                          description: The ID of the virtual machine to forward to.
-                          type: string
-                        vmGuestIp:
-                          description: |-
-                            The virtual machine IP address for the port
-                            forwarding rule (useful when the virtual machine has secondairy NICs
-                            or IP addresses).
-                          type: string
-                      type: object
-                    type: array
-                  ipAddressId:
-                    description: |-
-                      The IP address ID for which to create the port
-                      forwards. Changing this forces a new resource to be created.
+                      The IP address to assign to the NIC. Changing this
+                      forces a new resource to be created.
                     type: string
-                  managed:
+                  networkId:
                     description: |-
-                      USE WITH CAUTION! If enabled all the port forwards for
-                      this IP address will be managed by this resource. This means it will delete
-                      all port forwards that are not in your config! (defaults false)
-                    type: boolean
-                  project:
+                      The ID of the network to plug the NIC into. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
                     description: |-
-                      The name or ID of the project to create this port forward
-                      in. Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which to
+                      attach the NIC. Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -343,70 +286,36 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.forward is a required parameter
+            - message: spec.forProvider.networkId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.forward)
-                || (has(self.initProvider) && has(self.initProvider.forward))'
-            - message: spec.forProvider.ipAddressId is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.networkId)
+                || (has(self.initProvider) && has(self.initProvider.networkId))'
+            - message: spec.forProvider.virtualMachineId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipAddressId)
-                || (has(self.initProvider) && has(self.initProvider.ipAddressId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.virtualMachineId)
+                || (has(self.initProvider) && has(self.initProvider.virtualMachineId))'
           status:
-            description: ForwardStatus defines the observed state of Forward.
+            description: NicStatus defines the observed state of Nic.
             properties:
               atProvider:
                 properties:
-                  forward:
-                    description: |-
-                      Can be specified multiple times. Each forward block supports
-                      fields documented below.
-                    items:
-                      properties:
-                        privatePort:
-                          description: The private port to forward to.
-                          type: number
-                        protocol:
-                          description: |-
-                            The name of the protocol to allow. Valid options are:
-                            tcp and udp.
-                          type: string
-                        publicPort:
-                          description: The public port to forward from.
-                          type: number
-                        uuid:
-                          description: The ID of the IP address for which the port
-                            forwards are created.
-                          type: string
-                        virtualMachineId:
-                          description: The ID of the virtual machine to forward to.
-                          type: string
-                        vmGuestIp:
-                          description: |-
-                            The virtual machine IP address for the port
-                            forwarding rule (useful when the virtual machine has secondairy NICs
-                            or IP addresses).
-                          type: string
-                      type: object
-                    type: array
                   id:
-                    description: The ID of the IP address for which the port forwards
-                      are created.
+                    description: The ID of the NIC.
                     type: string
-                  ipAddressId:
+                  ipAddress:
                     description: |-
-                      The IP address ID for which to create the port
-                      forwards. Changing this forces a new resource to be created.
+                      The IP address to assign to the NIC. Changing this
+                      forces a new resource to be created.
                     type: string
-                  managed:
+                  networkId:
                     description: |-
-                      USE WITH CAUTION! If enabled all the port forwards for
-                      this IP address will be managed by this resource. This means it will delete
-                      all port forwards that are not in your config! (defaults false)
-                    type: boolean
-                  project:
+                      The ID of the network to plug the NIC into. Changing
+                      this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
                     description: |-
-                      The name or ID of the project to create this port forward
-                      in. Changing this forces a new resource to be created.
+                      The ID of the virtual machine to which to
+                      attach the NIC. Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

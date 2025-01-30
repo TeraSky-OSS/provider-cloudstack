@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: instances.machines.terasky.com
+  name: templates.machines.cloudstack.terasky.com
 spec:
-  group: machines.terasky.com
+  group: machines.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Instance
-    listKind: InstanceList
-    plural: instances
-    singular: instance
+    kind: Template
+    listKind: TemplateList
+    plural: templates
+    singular: template
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,9 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Instance is the Schema for the Instances API. Creates and automatically
-          starts a virtual machine based on a service offering, disk offering, and
-          template.
+        description: Template is the Schema for the Templates API. Registers an existing
+          template into the CloudStack cloud.
         properties:
           apiVersion:
             description: |-
@@ -56,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: InstanceSpec defines the desired state of Instance
+            description: TemplateSpec defines the desired state of Template
             properties:
               deletionPolicy:
                 default: Delete
@@ -74,140 +73,76 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  affinityGroupIds:
-                    description: |-
-                      List of affinity group IDs to apply to this
-                      instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  affinityGroupNames:
-                    description: |-
-                      List of affinity group names to apply to
-                      this instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  clusterId:
-                    description: |-
-                      destination Cluster ID to deploy the VM to - parameter available
-                      for root admin only
+                  displayText:
+                    description: The display name of the template.
                     type: string
-                  details:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  displayName:
-                    description: The display name of the instance.
-                    type: string
-                  expunge:
+                  format:
                     description: |-
-                      This determines if the instance is expunged when it is
-                      destroyed (defaults false)
-                    type: boolean
-                  group:
-                    description: The group name of the instance.
+                      The format of the template. Valid values are QCOW2,
+                      RAW, and VHD.
                     type: string
-                  hostId:
+                  hypervisor:
                     description: |-
-                      destination Host ID to deploy the VM to - parameter available
-                      for root admin only
-                    type: string
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to this instance. Changing
+                      The target hypervisor for the template. Changing
                       this forces a new resource to be created.
                     type: string
-                  keypair:
+                  isDynamicallyScalable:
                     description: |-
-                      The name of the SSH key pair that will be used to
-                      access this instance.
-                    type: string
+                      Set to indicate if the template contains
+                      tools to support dynamic scaling of VM cpu/memory (defaults false)
+                    type: boolean
+                  isExtractable:
+                    description: |-
+                      Set to indicate if the template is extractable
+                      (defaults false)
+                    type: boolean
+                  isFeatured:
+                    description: |-
+                      Set to indicate if the template is featured
+                      (defaults false)
+                    type: boolean
+                  isPublic:
+                    description: |-
+                      Set to indicate if the template is available for
+                      all accounts (defaults true)
+                    type: boolean
+                  isReadyTimeout:
+                    description: |-
+                      The maximum time in seconds to wait until the
+                      template is ready for use (defaults 300 seconds)
+                    type: number
                   name:
-                    description: The name of the instance.
+                    description: The name of the template.
                     type: string
-                  networkId:
+                  osType:
                     description: |-
-                      The ID of the network to connect this instance
-                      to. Changing this forces a new resource to be created.
+                      The OS Type that best represents the OS of this
+                      template.
                     type: string
-                  nicnetworklist:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  podId:
-                    description: destination Pod ID to deploy the VM to - parameter
-                      available for root admin only
-                    type: string
+                  passwordEnabled:
+                    description: |-
+                      Set to indicate if the template should be
+                      password enabled (defaults false)
+                    type: boolean
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  rootDiskSize:
-                    description: |-
-                      The size of the root disk in gigabytes. The
-                      root disk is resized on deploy. Only applies to template-based deployments.
+                      The name or ID of the project to create this template for.
                       Changing this forces a new resource to be created.
-                    type: number
-                  securityGroupIds:
-                    description: |-
-                      List of security group IDs to apply to this
-                      instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  securityGroupNames:
-                    description: |-
-                      List of security group names to apply to
-                      this instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for this instance.
                     type: string
-                  startVm:
-                    description: |-
-                      This determines if the instances is started after it
-                      is created (defaults true)
-                    type: boolean
                   tags:
                     additionalProperties:
                       type: string
                     type: object
                     x-kubernetes-map-type: granular
-                  template:
+                  url:
                     description: |-
-                      The name or ID of the template used for this
-                      instance. Changing this forces a new resource to be created.
-                    type: string
-                  uefi:
-                    description: When set, will boot the instance in UEFI/Legacy mode
-                      (defaults false)
-                    type: boolean
-                  userData:
-                    description: |-
-                      The user data to provide when launching the
-                      instance. This can be either plain text or base64 encoded text.
+                      The URL of where the template is hosted. Changing this
+                      forces a new resource to be created.
                     type: string
                   zone:
                     description: |-
-                      The name or ID of the zone where this instance will be
-                      created. Changing this forces a new resource to be created.
+                      The name or ID of the zone where this template will be created.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -223,140 +158,76 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  affinityGroupIds:
-                    description: |-
-                      List of affinity group IDs to apply to this
-                      instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  affinityGroupNames:
-                    description: |-
-                      List of affinity group names to apply to
-                      this instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  clusterId:
-                    description: |-
-                      destination Cluster ID to deploy the VM to - parameter available
-                      for root admin only
+                  displayText:
+                    description: The display name of the template.
                     type: string
-                  details:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  displayName:
-                    description: The display name of the instance.
-                    type: string
-                  expunge:
+                  format:
                     description: |-
-                      This determines if the instance is expunged when it is
-                      destroyed (defaults false)
-                    type: boolean
-                  group:
-                    description: The group name of the instance.
+                      The format of the template. Valid values are QCOW2,
+                      RAW, and VHD.
                     type: string
-                  hostId:
+                  hypervisor:
                     description: |-
-                      destination Host ID to deploy the VM to - parameter available
-                      for root admin only
-                    type: string
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to this instance. Changing
+                      The target hypervisor for the template. Changing
                       this forces a new resource to be created.
                     type: string
-                  keypair:
+                  isDynamicallyScalable:
                     description: |-
-                      The name of the SSH key pair that will be used to
-                      access this instance.
-                    type: string
+                      Set to indicate if the template contains
+                      tools to support dynamic scaling of VM cpu/memory (defaults false)
+                    type: boolean
+                  isExtractable:
+                    description: |-
+                      Set to indicate if the template is extractable
+                      (defaults false)
+                    type: boolean
+                  isFeatured:
+                    description: |-
+                      Set to indicate if the template is featured
+                      (defaults false)
+                    type: boolean
+                  isPublic:
+                    description: |-
+                      Set to indicate if the template is available for
+                      all accounts (defaults true)
+                    type: boolean
+                  isReadyTimeout:
+                    description: |-
+                      The maximum time in seconds to wait until the
+                      template is ready for use (defaults 300 seconds)
+                    type: number
                   name:
-                    description: The name of the instance.
+                    description: The name of the template.
                     type: string
-                  networkId:
+                  osType:
                     description: |-
-                      The ID of the network to connect this instance
-                      to. Changing this forces a new resource to be created.
+                      The OS Type that best represents the OS of this
+                      template.
                     type: string
-                  nicnetworklist:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  podId:
-                    description: destination Pod ID to deploy the VM to - parameter
-                      available for root admin only
-                    type: string
+                  passwordEnabled:
+                    description: |-
+                      Set to indicate if the template should be
+                      password enabled (defaults false)
+                    type: boolean
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  rootDiskSize:
-                    description: |-
-                      The size of the root disk in gigabytes. The
-                      root disk is resized on deploy. Only applies to template-based deployments.
+                      The name or ID of the project to create this template for.
                       Changing this forces a new resource to be created.
-                    type: number
-                  securityGroupIds:
-                    description: |-
-                      List of security group IDs to apply to this
-                      instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  securityGroupNames:
-                    description: |-
-                      List of security group names to apply to
-                      this instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for this instance.
                     type: string
-                  startVm:
-                    description: |-
-                      This determines if the instances is started after it
-                      is created (defaults true)
-                    type: boolean
                   tags:
                     additionalProperties:
                       type: string
                     type: object
                     x-kubernetes-map-type: granular
-                  template:
+                  url:
                     description: |-
-                      The name or ID of the template used for this
-                      instance. Changing this forces a new resource to be created.
-                    type: string
-                  uefi:
-                    description: When set, will boot the instance in UEFI/Legacy mode
-                      (defaults false)
-                    type: boolean
-                  userData:
-                    description: |-
-                      The user data to provide when launching the
-                      instance. This can be either plain text or base64 encoded text.
+                      The URL of where the template is hosted. Changing this
+                      forces a new resource to be created.
                     type: string
                   zone:
                     description: |-
-                      The name or ID of the zone where this instance will be
-                      created. Changing this forces a new resource to be created.
+                      The name or ID of the zone where this template will be created.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -527,160 +398,107 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.serviceOffering is a required parameter
+            - message: spec.forProvider.format is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.serviceOffering)
-                || (has(self.initProvider) && has(self.initProvider.serviceOffering))'
-            - message: spec.forProvider.template is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.format)
+                || (has(self.initProvider) && has(self.initProvider.format))'
+            - message: spec.forProvider.hypervisor is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.template)
-                || (has(self.initProvider) && has(self.initProvider.template))'
-            - message: spec.forProvider.zone is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.hypervisor)
+                || (has(self.initProvider) && has(self.initProvider.hypervisor))'
+            - message: spec.forProvider.name is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
-                || (has(self.initProvider) && has(self.initProvider.zone))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.osType is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.osType)
+                || (has(self.initProvider) && has(self.initProvider.osType))'
+            - message: spec.forProvider.url is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.url)
+                || (has(self.initProvider) && has(self.initProvider.url))'
           status:
-            description: InstanceStatus defines the observed state of Instance.
+            description: TemplateStatus defines the observed state of Template.
             properties:
               atProvider:
                 properties:
-                  affinityGroupIds:
-                    description: |-
-                      List of affinity group IDs to apply to this
-                      instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  affinityGroupNames:
-                    description: |-
-                      List of affinity group names to apply to
-                      this instance.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  clusterId:
-                    description: |-
-                      destination Cluster ID to deploy the VM to - parameter available
-                      for root admin only
+                  displayText:
+                    description: The display name of the template.
                     type: string
-                  details:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  displayName:
-                    description: The display name of the instance.
-                    type: string
-                  expunge:
+                  format:
                     description: |-
-                      This determines if the instance is expunged when it is
-                      destroyed (defaults false)
-                    type: boolean
-                  group:
-                    description: The group name of the instance.
+                      The format of the template. Valid values are QCOW2,
+                      RAW, and VHD.
                     type: string
-                  hostId:
+                  hypervisor:
                     description: |-
-                      destination Host ID to deploy the VM to - parameter available
-                      for root admin only
-                    type: string
-                  id:
-                    description: The instance ID.
-                    type: string
-                  ipAddress:
-                    description: |-
-                      The IP address to assign to this instance. Changing
+                      The target hypervisor for the template. Changing
                       this forces a new resource to be created.
                     type: string
-                  keypair:
-                    description: |-
-                      The name of the SSH key pair that will be used to
-                      access this instance.
+                  id:
+                    description: The template ID.
                     type: string
+                  isDynamicallyScalable:
+                    description: |-
+                      Set to indicate if the template contains
+                      tools to support dynamic scaling of VM cpu/memory (defaults false)
+                    type: boolean
+                  isExtractable:
+                    description: |-
+                      Set to indicate if the template is extractable
+                      (defaults false)
+                    type: boolean
+                  isFeatured:
+                    description: |-
+                      Set to indicate if the template is featured
+                      (defaults false)
+                    type: boolean
+                  isPublic:
+                    description: |-
+                      Set to indicate if the template is available for
+                      all accounts (defaults true)
+                    type: boolean
+                  isReady:
+                    description: Set to "true" once the template is ready for use.
+                    type: boolean
+                  isReadyTimeout:
+                    description: |-
+                      The maximum time in seconds to wait until the
+                      template is ready for use (defaults 300 seconds)
+                    type: number
                   name:
-                    description: The name of the instance.
+                    description: The name of the template.
                     type: string
-                  networkId:
+                  osType:
                     description: |-
-                      The ID of the network to connect this instance
-                      to. Changing this forces a new resource to be created.
+                      The OS Type that best represents the OS of this
+                      template.
                     type: string
-                  nicnetworklist:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  podId:
-                    description: destination Pod ID to deploy the VM to - parameter
-                      available for root admin only
-                    type: string
+                  passwordEnabled:
+                    description: |-
+                      Set to indicate if the template should be
+                      password enabled (defaults false)
+                    type: boolean
                   project:
                     description: |-
-                      The name or ID of the project to deploy this
-                      instance to. Changing this forces a new resource to be created.
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                    x-kubernetes-map-type: granular
-                  rootDiskSize:
-                    description: |-
-                      The size of the root disk in gigabytes. The
-                      root disk is resized on deploy. Only applies to template-based deployments.
+                      The name or ID of the project to create this template for.
                       Changing this forces a new resource to be created.
-                    type: number
-                  securityGroupIds:
-                    description: |-
-                      List of security group IDs to apply to this
-                      instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  securityGroupNames:
-                    description: |-
-                      List of security group names to apply to
-                      this instance. Changing this forces a new resource to be created.
-                    items:
-                      type: string
-                    type: array
-                    x-kubernetes-list-type: set
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for this instance.
                     type: string
-                  startVm:
-                    description: |-
-                      This determines if the instances is started after it
-                      is created (defaults true)
-                    type: boolean
                   tags:
                     additionalProperties:
                       type: string
                     type: object
                     x-kubernetes-map-type: granular
-                  template:
+                  url:
                     description: |-
-                      The name or ID of the template used for this
-                      instance. Changing this forces a new resource to be created.
-                    type: string
-                  uefi:
-                    description: When set, will boot the instance in UEFI/Legacy mode
-                      (defaults false)
-                    type: boolean
-                  userData:
-                    description: |-
-                      The user data to provide when launching the
-                      instance. This can be either plain text or base64 encoded text.
+                      The URL of where the template is hosted. Changing this
+                      forces a new resource to be created.
                     type: string
                   zone:
                     description: |-
-                      The name or ID of the zone where this instance will be
-                      created. Changing this forces a new resource to be created.
+                      The name or ID of the zone where this template will be created.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

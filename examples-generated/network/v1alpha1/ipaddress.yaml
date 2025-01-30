@@ -1,4 +1,4 @@
-apiVersion: network.terasky.com/v1alpha1
+apiVersion: network.cloudstack.terasky.com/v1alpha1
 kind: Ipaddress
 metadata:
   annotations:
@@ -8,4 +8,4 @@ metadata:
   name: default
 spec:
   forProvider:
-    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
+    virtualMachineId: server-1

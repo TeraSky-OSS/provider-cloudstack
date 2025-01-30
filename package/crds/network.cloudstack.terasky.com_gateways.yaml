@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: domains.system.terasky.com
+  name: gateways.network.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Domain
-    listKind: DomainList
-    plural: domains
-    singular: domain
+    kind: Gateway
+    listKind: GatewayList
+    plural: gateways
+    singular: gateway
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Domain is the Schema for the Domains API. Creates a Domain
+        description: Gateway is the Schema for the Gateways API. Creates a site to
+          site VPN local gateway.
         properties:
           apiVersion:
             description: |-
@@ -54,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: DomainSpec defines the desired state of Domain
+            description: GatewaySpec defines the desired state of Gateway
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,17 +73,10 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  domainId:
-                    description: The ID of the domain.
-                    type: string
-                  name:
-                    description: The name of the domain.
-                    type: string
-                  networkDomain:
-                    description: The network domain for the domain.
-                    type: string
-                  parentDomainId:
-                    description: The ID of the parent domain.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC for which to create the VPN Gateway.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -98,17 +92,10 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  domainId:
-                    description: The ID of the domain.
-                    type: string
-                  name:
-                    description: The name of the domain.
-                    type: string
-                  networkDomain:
-                    description: The network domain for the domain.
-                    type: string
-                  parentDomainId:
-                    description: The ID of the parent domain.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC for which to create the VPN Gateway.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -279,29 +266,25 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.name is a required parameter
+            - message: spec.forProvider.vpcId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpcId)
+                || (has(self.initProvider) && has(self.initProvider.vpcId))'
           status:
-            description: DomainStatus defines the observed state of Domain.
+            description: GatewayStatus defines the observed state of Gateway.
             properties:
               atProvider:
                 properties:
-                  domainId:
-                    description: The ID of the domain.
-                    type: string
                   id:
-                    description: The ID of the domain.
+                    description: The ID of the VPN Gateway.
                     type: string
-                  name:
-                    description: The name of the domain.
+                  publicIp:
+                    description: The public IP address associated with the VPN Gateway.
                     type: string
-                  networkDomain:
-                    description: The network domain for the domain.
-                    type: string
-                  parentDomainId:
-                    description: The ID of the parent domain.
+                  vpcId:
+                    description: |-
+                      The ID of the VPC for which to create the VPN Gateway.
+                      Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

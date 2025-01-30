@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: vmprofiles.system.terasky.com
+  name: connections.network.cloudstack.terasky.com
 spec:
-  group: system.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: VMProfile
-    listKind: VMProfileList
-    plural: vmprofiles
-    singular: vmprofile
+    kind: Connection
+    listKind: ConnectionList
+    plural: connections
+    singular: connection
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: VMProfile is the Schema for the VMProfiles API. Creates an autoscale
-          VM profile.
+        description: Connection is the Schema for the Connections API. Creates a site
+          to site VPN connection.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: VMProfileSpec defines the desired state of VMProfile
+            description: ConnectionSpec defines the desired state of Connection
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,39 +73,15 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  destroyVmGracePeriod:
+                  customerGatewayId:
                     description: |-
-                      A time interval to wait for graceful
-                      shutdown of instances.
+                      The Customer Gateway ID to connect.
+                      Changing this forces a new resource to be created.
                     type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
+                  vpnGatewayId:
                     description: |-
-                      A mapping of metadata key/values to assign to the
-                      resource.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  otherDeployParams:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      A mapping of additional params used when
-                      creating new instances.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for instances. Changing this forces a new resource to be created.
-                    type: string
-                  template:
-                    description: The name or ID of the template used for instances.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where instances will be
-                      created. Changing this forces a new resource to be created.
+                      The VPN Gateway ID to connect. Changing
+                      this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -121,39 +97,15 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  destroyVmGracePeriod:
+                  customerGatewayId:
                     description: |-
-                      A time interval to wait for graceful
-                      shutdown of instances.
+                      The Customer Gateway ID to connect.
+                      Changing this forces a new resource to be created.
                     type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
+                  vpnGatewayId:
                     description: |-
-                      A mapping of metadata key/values to assign to the
-                      resource.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  otherDeployParams:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      A mapping of additional params used when
-                      creating new instances.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for instances. Changing this forces a new resource to be created.
-                    type: string
-                  template:
-                    description: The name or ID of the template used for instances.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where instances will be
-                      created. Changing this forces a new resource to be created.
+                      The VPN Gateway ID to connect. Changing
+                      this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -324,59 +276,31 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.serviceOffering is a required parameter
+            - message: spec.forProvider.customerGatewayId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.serviceOffering)
-                || (has(self.initProvider) && has(self.initProvider.serviceOffering))'
-            - message: spec.forProvider.template is a required parameter
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.customerGatewayId)
+                || (has(self.initProvider) && has(self.initProvider.customerGatewayId))'
+            - message: spec.forProvider.vpnGatewayId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.template)
-                || (has(self.initProvider) && has(self.initProvider.template))'
-            - message: spec.forProvider.zone is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.zone)
-                || (has(self.initProvider) && has(self.initProvider.zone))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpnGatewayId)
+                || (has(self.initProvider) && has(self.initProvider.vpnGatewayId))'
           status:
-            description: VMProfileStatus defines the observed state of VMProfile.
+            description: ConnectionStatus defines the observed state of Connection.
             properties:
               atProvider:
                 properties:
-                  destroyVmGracePeriod:
+                  customerGatewayId:
                     description: |-
-                      A time interval to wait for graceful
-                      shutdown of instances.
+                      The Customer Gateway ID to connect.
+                      Changing this forces a new resource to be created.
                     type: string
                   id:
-                    description: The autoscale VM profile ID.
+                    description: The ID of the VPN Connection.
                     type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
+                  vpnGatewayId:
                     description: |-
-                      A mapping of metadata key/values to assign to the
-                      resource.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  otherDeployParams:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      A mapping of additional params used when
-                      creating new instances.
-                    type: object
-                    x-kubernetes-map-type: granular
-                  serviceOffering:
-                    description: |-
-                      The name or ID of the service offering used
-                      for instances. Changing this forces a new resource to be created.
-                    type: string
-                  template:
-                    description: The name or ID of the template used for instances.
-                    type: string
-                  zone:
-                    description: |-
-                      The name or ID of the zone where instances will be
-                      created. Changing this forces a new resource to be created.
+                      The VPN Gateway ID to connect. Changing
+                      this forces a new resource to be created.
                     type: string
                 type: object
               conditions:

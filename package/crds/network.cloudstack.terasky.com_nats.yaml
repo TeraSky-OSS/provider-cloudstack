@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: gateways.network.terasky.com
+  name: nats.network.cloudstack.terasky.com
 spec:
-  group: network.terasky.com
+  group: network.cloudstack.terasky.com
   names:
     categories:
     - crossplane
     - managed
     - cloudstack
-    kind: Gateway
-    listKind: GatewayList
-    plural: gateways
-    singular: gateway
+    kind: NAT
+    listKind: NATList
+    plural: nats
+    singular: nat
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,8 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Gateway is the Schema for the Gateways API. Creates a site to
-          site VPN local gateway.
+        description: NAT is the Schema for the NATs API. Enables static NAT for a
+          given IP address.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +55,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: GatewaySpec defines the desired state of Gateway
+            description: NATSpec defines the desired state of NAT
             properties:
               deletionPolicy:
                 default: Delete
@@ -73,10 +73,26 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  vpcId:
+                  ipAddressId:
                     description: |-
-                      The ID of the VPC for which to create the VPN Gateway.
-                      Changing this forces a new resource to be created.
+                      The public IP address ID for which static
+                      NAT will be enabled. Changing this forces a new resource to be created.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
+                    description: |-
+                      The virtual machine ID to enable the
+                      static NAT feature for. Changing this forces a new resource to be created.
+                    type: string
+                  vmGuestIp:
+                    description: |-
+                      The virtual machine IP address to forward the
+                      static NAT traffic to (useful when the virtual machine has secondary
+                      NICs or IP addresses). Changing this forces a new resource to be created.
                     type: string
                 type: object
               initProvider:
@@ -92,10 +108,26 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  vpcId:
+                  ipAddressId:
                     description: |-
-                      The ID of the VPC for which to create the VPN Gateway.
-                      Changing this forces a new resource to be created.
+                      The public IP address ID for which static
+                      NAT will be enabled. Changing this forces a new resource to be created.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
+                    description: |-
+                      The virtual machine ID to enable the
+                      static NAT feature for. Changing this forces a new resource to be created.
+                    type: string
+                  vmGuestIp:
+                    description: |-
+                      The virtual machine IP address to forward the
+                      static NAT traffic to (useful when the virtual machine has secondary
+                      NICs or IP addresses). Changing this forces a new resource to be created.
                     type: string
                 type: object
               managementPolicies:
@@ -266,25 +298,42 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.vpcId is a required parameter
+            - message: spec.forProvider.ipAddressId is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.vpcId)
-                || (has(self.initProvider) && has(self.initProvider.vpcId))'
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.ipAddressId)
+                || (has(self.initProvider) && has(self.initProvider.ipAddressId))'
+            - message: spec.forProvider.virtualMachineId is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.virtualMachineId)
+                || (has(self.initProvider) && has(self.initProvider.virtualMachineId))'
           status:
-            description: GatewayStatus defines the observed state of Gateway.
+            description: NATStatus defines the observed state of NAT.
             properties:
               atProvider:
                 properties:
                   id:
-                    description: The ID of the VPN Gateway.
+                    description: The static nat ID.
                     type: string
-                  publicIp:
-                    description: The public IP address associated with the VPN Gateway.
-                    type: string
-                  vpcId:
+                  ipAddressId:
                     description: |-
-                      The ID of the VPC for which to create the VPN Gateway.
-                      Changing this forces a new resource to be created.
+                      The public IP address ID for which static
+                      NAT will be enabled. Changing this forces a new resource to be created.
+                    type: string
+                  project:
+                    description: |-
+                      The name or ID of the project to deploy this
+                      instance to. Changing this forces a new resource to be created.
+                    type: string
+                  virtualMachineId:
+                    description: |-
+                      The virtual machine ID to enable the
+                      static NAT feature for. Changing this forces a new resource to be created.
+                    type: string
+                  vmGuestIp:
+                    description: |-
+                      The virtual machine IP address to forward the
+                      static NAT traffic to (useful when the virtual machine has secondary
+                      NICs or IP addresses). Changing this forces a new resource to be created.
                     type: string
                 type: object
               conditions:
