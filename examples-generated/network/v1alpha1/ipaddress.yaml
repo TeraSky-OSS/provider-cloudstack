@@ -8,4 +8,4 @@ metadata:
   name: default
 spec:
   forProvider:
-    virtualMachineId: server-1
+    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
