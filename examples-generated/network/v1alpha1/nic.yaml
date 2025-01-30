@@ -1,0 +1,13 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: Nic
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/nic
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+spec:
+  forProvider:
+    ipAddress: 192.168.1.1
+    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
+    virtualMachineId: f8141e2f-4e7e-4c63-9362-986c908b7ea7

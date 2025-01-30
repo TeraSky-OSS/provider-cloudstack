@@ -1,0 +1,12 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: NAT
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/nat
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    ipAddressId: f8141e2f-4e7e-4c63-9362-986c908b7ea7
+    virtualMachineId: 6ca2a163-bc68-429c-adc8-ab4a620b1bb3

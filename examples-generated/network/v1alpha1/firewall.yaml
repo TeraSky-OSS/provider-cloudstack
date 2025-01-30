@@ -1,0 +1,18 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: Firewall
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/firewall
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
+    rule:
+    - cidrList:
+      - 10.0.0.0/8
+      ports:
+      - "80"
+      - 1000-2000
+      protocol: tcp

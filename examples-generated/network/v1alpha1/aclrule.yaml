@@ -1,0 +1,20 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: ACLRule
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/aclrule
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    aclId: f3843ce0-334c-4586-bbd3-0c2e2bc946c6
+    rule:
+    - action: allow
+      cidrList:
+      - 10.0.0.0/8
+      ports:
+      - "80"
+      - 1000-2000
+      protocol: tcp
+      trafficType: ingress

@@ -1,0 +1,13 @@
+apiVersion: storage.terasky.com/v1alpha1
+kind: Volume
+metadata:
+  annotations:
+    meta.upbound.io/example-id: storage/v1alpha1/volume
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    diskOfferingId: a6f7e5fb-1b9a-417e-a46e-7e3d715f34d3
+    name: example-volume
+    zoneId: b0fcd7cc-5e14-499d-a2ff-ecf49840f1ab

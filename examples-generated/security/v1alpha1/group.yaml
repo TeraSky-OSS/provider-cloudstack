@@ -1,0 +1,12 @@
+apiVersion: security.terasky.com/v1alpha1
+kind: Group
+metadata:
+  annotations:
+    meta.upbound.io/example-id: security/v1alpha1/group
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    description: Allow access to HTTP and HTTPS
+    name: allow_web

@@ -1,0 +1,11 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: Gateway
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/gateway
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    vpcId: f8141e2f-4e7e-4c63-9362-986c908b7ea7

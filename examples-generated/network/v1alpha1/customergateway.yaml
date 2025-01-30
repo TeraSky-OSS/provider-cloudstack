@@ -1,0 +1,16 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: CustomerGateway
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/customergateway
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    cidr: 10.0.0.0/8
+    espPolicy: aes256-sha1;modp1024
+    gateway: 192.168.0.1
+    ikePolicy: aes256-sha1;modp1024
+    ipsecPsk: terraform
+    name: test-vpc

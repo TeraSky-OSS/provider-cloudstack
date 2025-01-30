@@ -1,0 +1,12 @@
+apiVersion: system.terasky.com/v1alpha1
+kind: Offering
+metadata:
+  annotations:
+    meta.upbound.io/example-id: system/v1alpha1/offering
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    displayText: Example Service Offering
+    name: example-service-offering

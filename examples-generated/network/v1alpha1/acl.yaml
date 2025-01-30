@@ -1,0 +1,12 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: ACL
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/acl
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    name: test-acl
+    vpcId: 76f6e8dc-07e3-4971-b2a2-8831b0cc4cb4

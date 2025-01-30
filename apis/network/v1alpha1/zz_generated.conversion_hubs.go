@@ -7,10 +7,43 @@
 package v1alpha1
 
 // Hub marks this type as a conversion hub.
+func (tr *ACL) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *ACLRule) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Connection) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *CustomerGateway) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Firewall) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Forward) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Gateway) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *Ipaddress) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *NAT) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *Network) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Nic) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Offering) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Route) Hub() {}
 
 // Hub marks this type as a conversion hub.
 func (tr *VPC) Hub() {}

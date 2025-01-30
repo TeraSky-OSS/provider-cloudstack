@@ -1,0 +1,16 @@
+apiVersion: system.terasky.com/v1alpha1
+kind: User
+metadata:
+  annotations:
+    meta.upbound.io/example-id: system/v1alpha1/user
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    account: example-account
+    email: user@example.com
+    firstName: John
+    lastName: Doe
+    password: securepassword
+    username: jdoe

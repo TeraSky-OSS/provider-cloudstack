@@ -10,8 +10,11 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/terasky-oss/provider-cloudstack/apis/machine/v1alpha1"
+	v1alpha1 "github.com/terasky-oss/provider-cloudstack/apis/machines/v1alpha1"
 	v1alpha1network "github.com/terasky-oss/provider-cloudstack/apis/network/v1alpha1"
+	v1alpha1security "github.com/terasky-oss/provider-cloudstack/apis/security/v1alpha1"
+	v1alpha1storage "github.com/terasky-oss/provider-cloudstack/apis/storage/v1alpha1"
+	v1alpha1system "github.com/terasky-oss/provider-cloudstack/apis/system/v1alpha1"
 	v1alpha1apis "github.com/terasky-oss/provider-cloudstack/apis/v1alpha1"
 	v1beta1 "github.com/terasky-oss/provider-cloudstack/apis/v1beta1"
 )
@@ -21,6 +24,9 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
 		v1alpha1network.SchemeBuilder.AddToScheme,
+		v1alpha1security.SchemeBuilder.AddToScheme,
+		v1alpha1storage.SchemeBuilder.AddToScheme,
+		v1alpha1system.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
 	)

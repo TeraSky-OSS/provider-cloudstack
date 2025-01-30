@@ -1,0 +1,13 @@
+apiVersion: security.terasky.com/v1alpha1
+kind: Keypair
+metadata:
+  annotations:
+    meta.upbound.io/example-id: security/v1alpha1/keypair
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    name: myKey
+    project: myProject
+    publicKey: ${file("~/.ssh/id_rsa.pub")}

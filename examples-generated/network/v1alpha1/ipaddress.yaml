@@ -8,6 +8,4 @@ metadata:
   name: default
 spec:
   forProvider:
-    networkIdSelector:
-      matchLabels:
-        testing.upbound.io/example-name: example
+    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021

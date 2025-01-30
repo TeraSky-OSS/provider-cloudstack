@@ -1,0 +1,13 @@
+apiVersion: storage.terasky.com/v1alpha1
+kind: Offering
+metadata:
+  annotations:
+    meta.upbound.io/example-id: storage/v1alpha1/offering
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    diskSize: 100
+    displayText: Example Disk Offering
+    name: example-disk-offering

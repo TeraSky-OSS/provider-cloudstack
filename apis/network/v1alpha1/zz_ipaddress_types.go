@@ -13,138 +13,70 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-type IpaddressInitParameters struct {
+type IpaddressInitParameters_2 struct {
 
-	// This determines if the IP address should be transferable
-	// across zones (defaults false)
-	IsPortable *bool `json:"isPortable,omitempty" tf:"is_portable,omitempty"`
-
-	// The ID of the network for which an IP address should
-	// be acquired and associated. Changing this forces a new resource to be created.
-	// +crossplane:generate:reference:type=github.com/terasky-oss/provider-cloudstack/apis/network/v1alpha1.Network
-	NetworkID *string `json:"networkId,omitempty" tf:"network_id,omitempty"`
-
-	// Reference to a Network in network to populate networkId.
-	// +kubebuilder:validation:Optional
-	NetworkIDRef *v1.Reference `json:"networkIdRef,omitempty" tf:"-"`
-
-	// Selector for a Network in network to populate networkId.
-	// +kubebuilder:validation:Optional
-	NetworkIDSelector *v1.Selector `json:"networkIdSelector,omitempty" tf:"-"`
-
-	// The name or ID of the project to deploy this
-	// instance to. Changing this forces a new resource to be created.
-	Project *string `json:"project,omitempty" tf:"project,omitempty"`
-
-	// +mapType=granular
-	Tags map[string]*string `json:"tags,omitempty" tf:"tags,omitempty"`
-
-	// The ID of the VPC for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	// +crossplane:generate:reference:type=github.com/terasky-oss/provider-cloudstack/apis/network/v1alpha1.VPC
-	VPCID *string `json:"vpcId,omitempty" tf:"vpc_id,omitempty"`
-
-	// Reference to a VPC in network to populate vpcId.
-	// +kubebuilder:validation:Optional
-	VPCIDRef *v1.Reference `json:"vpcIdRef,omitempty" tf:"-"`
-
-	// Selector for a VPC in network to populate vpcId.
-	// +kubebuilder:validation:Optional
-	VPCIDSelector *v1.Selector `json:"vpcIdSelector,omitempty" tf:"-"`
-
-	// The name or ID of the zone for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	Zone *string `json:"zone,omitempty" tf:"zone,omitempty"`
-}
-
-type IpaddressObservation struct {
-
-	// The ID of the acquired and associated IP address.
-	ID *string `json:"id,omitempty" tf:"id,omitempty"`
-
-	// The IP address that was acquired and associated.
+	// The IP address to bind the to NIC. If not supplied
+	// an IP address will be selected randomly. Changing this forces a new resource
+	// to be	created.
 	IPAddress *string `json:"ipAddress,omitempty" tf:"ip_address,omitempty"`
 
-	// This determines if the IP address should be transferable
-	// across zones (defaults false)
-	IsPortable *bool `json:"isPortable,omitempty" tf:"is_portable,omitempty"`
+	// The NIC ID to which you want to attach the secondary IP
+	// address. Changing this forces a new resource to be created (defaults to the
+	// ID of the primary NIC)
+	NicID *string `json:"nicId,omitempty" tf:"nic_id,omitempty"`
 
-	IsSourceNAT *bool `json:"isSourceNat,omitempty" tf:"is_source_nat,omitempty"`
-
-	// The ID of the network for which an IP address should
-	// be acquired and associated. Changing this forces a new resource to be created.
-	NetworkID *string `json:"networkId,omitempty" tf:"network_id,omitempty"`
-
-	// The name or ID of the project to deploy this
-	// instance to. Changing this forces a new resource to be created.
-	Project *string `json:"project,omitempty" tf:"project,omitempty"`
-
-	// +mapType=granular
-	Tags map[string]*string `json:"tags,omitempty" tf:"tags,omitempty"`
-
-	// The ID of the VPC for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	VPCID *string `json:"vpcId,omitempty" tf:"vpc_id,omitempty"`
-
-	// The name or ID of the zone for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	Zone *string `json:"zone,omitempty" tf:"zone,omitempty"`
+	// The ID of the virtual machine to which you
+	// want to attach the secondary IP address. Changing this forces a new resource
+	// to be created.
+	VirtualMachineID *string `json:"virtualMachineId,omitempty" tf:"virtual_machine_id,omitempty"`
 }
 
-type IpaddressParameters struct {
+type IpaddressObservation_2 struct {
 
-	// This determines if the IP address should be transferable
-	// across zones (defaults false)
-	// +kubebuilder:validation:Optional
-	IsPortable *bool `json:"isPortable,omitempty" tf:"is_portable,omitempty"`
+	// The secondary IP address ID.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
-	// The ID of the network for which an IP address should
-	// be acquired and associated. Changing this forces a new resource to be created.
-	// +crossplane:generate:reference:type=github.com/terasky-oss/provider-cloudstack/apis/network/v1alpha1.Network
-	// +kubebuilder:validation:Optional
-	NetworkID *string `json:"networkId,omitempty" tf:"network_id,omitempty"`
+	// The IP address to bind the to NIC. If not supplied
+	// an IP address will be selected randomly. Changing this forces a new resource
+	// to be	created.
+	IPAddress *string `json:"ipAddress,omitempty" tf:"ip_address,omitempty"`
 
-	// Reference to a Network in network to populate networkId.
-	// +kubebuilder:validation:Optional
-	NetworkIDRef *v1.Reference `json:"networkIdRef,omitempty" tf:"-"`
+	// The NIC ID to which you want to attach the secondary IP
+	// address. Changing this forces a new resource to be created (defaults to the
+	// ID of the primary NIC)
+	NicID *string `json:"nicId,omitempty" tf:"nic_id,omitempty"`
 
-	// Selector for a Network in network to populate networkId.
-	// +kubebuilder:validation:Optional
-	NetworkIDSelector *v1.Selector `json:"networkIdSelector,omitempty" tf:"-"`
+	// The ID of the virtual machine to which you
+	// want to attach the secondary IP address. Changing this forces a new resource
+	// to be created.
+	VirtualMachineID *string `json:"virtualMachineId,omitempty" tf:"virtual_machine_id,omitempty"`
+}
 
-	// The name or ID of the project to deploy this
-	// instance to. Changing this forces a new resource to be created.
-	// +kubebuilder:validation:Optional
-	Project *string `json:"project,omitempty" tf:"project,omitempty"`
+type IpaddressParameters_2 struct {
 
+	// The IP address to bind the to NIC. If not supplied
+	// an IP address will be selected randomly. Changing this forces a new resource
+	// to be	created.
 	// +kubebuilder:validation:Optional
-	// +mapType=granular
-	Tags map[string]*string `json:"tags,omitempty" tf:"tags,omitempty"`
+	IPAddress *string `json:"ipAddress,omitempty" tf:"ip_address,omitempty"`
 
-	// The ID of the VPC for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	// +crossplane:generate:reference:type=github.com/terasky-oss/provider-cloudstack/apis/network/v1alpha1.VPC
+	// The NIC ID to which you want to attach the secondary IP
+	// address. Changing this forces a new resource to be created (defaults to the
+	// ID of the primary NIC)
 	// +kubebuilder:validation:Optional
-	VPCID *string `json:"vpcId,omitempty" tf:"vpc_id,omitempty"`
+	NicID *string `json:"nicId,omitempty" tf:"nic_id,omitempty"`
 
-	// Reference to a VPC in network to populate vpcId.
+	// The ID of the virtual machine to which you
+	// want to attach the secondary IP address. Changing this forces a new resource
+	// to be created.
 	// +kubebuilder:validation:Optional
-	VPCIDRef *v1.Reference `json:"vpcIdRef,omitempty" tf:"-"`
-
-	// Selector for a VPC in network to populate vpcId.
-	// +kubebuilder:validation:Optional
-	VPCIDSelector *v1.Selector `json:"vpcIdSelector,omitempty" tf:"-"`
-
-	// The name or ID of the zone for which an IP address should be
-	// acquired and associated. Changing this forces a new resource to be created.
-	// +kubebuilder:validation:Optional
-	Zone *string `json:"zone,omitempty" tf:"zone,omitempty"`
+	VirtualMachineID *string `json:"virtualMachineId,omitempty" tf:"virtual_machine_id,omitempty"`
 }
 
 // IpaddressSpec defines the desired state of Ipaddress
 type IpaddressSpec struct {
 	v1.ResourceSpec `json:",inline"`
-	ForProvider     IpaddressParameters `json:"forProvider"`
+	ForProvider     IpaddressParameters_2 `json:"forProvider"`
 	// THIS IS A BETA FIELD. It will be honored
 	// unless the Management Policies feature flag is disabled.
 	// InitProvider holds the same fields as ForProvider, with the exception
@@ -155,20 +87,20 @@ type IpaddressSpec struct {
 	// required on creation, but we do not desire to update them after creation,
 	// for example because of an external controller is managing them, like an
 	// autoscaler.
-	InitProvider IpaddressInitParameters `json:"initProvider,omitempty"`
+	InitProvider IpaddressInitParameters_2 `json:"initProvider,omitempty"`
 }
 
 // IpaddressStatus defines the observed state of Ipaddress.
 type IpaddressStatus struct {
 	v1.ResourceStatus `json:",inline"`
-	AtProvider        IpaddressObservation `json:"atProvider,omitempty"`
+	AtProvider        IpaddressObservation_2 `json:"atProvider,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
 
-// Ipaddress is the Schema for the Ipaddresss API. Acquires and associates a public IP.
+// Ipaddress is the Schema for the Ipaddresss API. Assigns a secondary IP to a NIC.
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
@@ -177,8 +109,9 @@ type IpaddressStatus struct {
 type Ipaddress struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              IpaddressSpec   `json:"spec"`
-	Status            IpaddressStatus `json:"status,omitempty"`
+	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.virtualMachineId) || (has(self.initProvider) && has(self.initProvider.virtualMachineId))",message="spec.forProvider.virtualMachineId is a required parameter"
+	Spec   IpaddressSpec   `json:"spec"`
+	Status IpaddressStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

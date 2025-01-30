@@ -1,0 +1,15 @@
+apiVersion: machines.terasky.com/v1alpha1
+kind: Instance
+metadata:
+  annotations:
+    meta.upbound.io/example-id: machines/v1alpha1/instance
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    name: server-1
+    networkId: 6eb22f91-7454-4107-89f4-36afcdf33021
+    serviceOffering: small
+    template: CentOS 6.5
+    zone: zone-1

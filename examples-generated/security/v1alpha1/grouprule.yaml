@@ -1,0 +1,29 @@
+apiVersion: security.terasky.com/v1alpha1
+kind: GroupRule
+metadata:
+  annotations:
+    meta.upbound.io/example-id: security/v1alpha1/grouprule
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    rule:
+    - cidrList:
+      - 0.0.0.0/0
+      ports:
+      - "80"
+      - "443"
+      protocol: tcp
+    - cidrList:
+      - 192.168.0.0/24
+      - 192.168.1.0/25
+      ports:
+      - 80-90
+      - "443"
+      protocol: tcp
+      trafficType: egress
+      userSecurityGroupList:
+      - group01
+      - group02
+    securityGroupId: e340b62b-fbc2-4081-8f67-e40455c44bce

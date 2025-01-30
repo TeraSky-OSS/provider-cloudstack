@@ -1,0 +1,16 @@
+apiVersion: network.terasky.com/v1alpha1
+kind: Forward
+metadata:
+  annotations:
+    meta.upbound.io/example-id: network/v1alpha1/forward
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    forward:
+    - privatePort: 80
+      protocol: tcp
+      publicPort: 8080
+      virtualMachineId: f8141e2f-4e7e-4c63-9362-986c908b7ea7
+    ipAddressId: 30b21801-d4b3-4174-852b-0c0f30bdbbfb

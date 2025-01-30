@@ -1,0 +1,19 @@
+apiVersion: system.terasky.com/v1alpha1
+kind: VMProfile
+metadata:
+  annotations:
+    meta.upbound.io/example-id: system/v1alpha1/vmprofile
+  labels:
+    testing.upbound.io/example-name: profile1
+  name: profile1
+spec:
+  forProvider:
+    destroyVmGracePeriod: 45s
+    metadata:
+      mydata: "true"
+    otherDeployParams:
+      displayname: profile1vm
+      networkids: 6eb22f91-7454-4107-89f4-36afcdf33021
+    serviceOffering: small
+    template: CentOS 6.5
+    zone: zone-1
